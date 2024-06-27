@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +35,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signIn")
-    private ResponseEntity<Object> signIn(@RequestBody UserDto userDto, HttpServletRequest request) {
+    private ResponseEntity<String> signIn(@RequestBody UserDto userDto, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(userDto.username(),
                 userDto.password());
         try {
@@ -48,7 +47,7 @@ public class AuthenticationController {
 
             return ResponseEntity.ok().body("Аутентификация прошла успешно");
         } catch (AuthenticationException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.ok().body("Аутентификация провалена");
         }
     }
 
