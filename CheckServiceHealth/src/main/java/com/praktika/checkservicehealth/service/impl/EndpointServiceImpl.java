@@ -30,74 +30,59 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     @Scheduled(fixedRate = 5000) //каждые 5 сек
-    public boolean checkAllEndpoints() {
+    public void checkAllEndpoints() {
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
-        WebClient webClient = WebClient.create(URL_ENDPOINTS);
         for (Endpoint endpoint : endpoints) {
             try {
                 LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
                 ObjectMapper objectMapper = new ObjectMapper();
                 String json = objectMapper.writeValueAsString(loginEndpointDto);
 
-                Mono<ClientResponse> responseMono = webClient.post()
+                WebClient.create(URL_ENDPOINTS).post()
                         .uri(endpoint.getUrl())
                         .header("Content-Type", "application/json")
                         .bodyValue(json)
-                        .exchange();
-
-//                Mono<String> responseMono = webClient.post()
-//                        .uri(endpoint.getUrl())
-//                        .header("Content-Type", "application/json")
-//                        .bodyValue(json)
-//                        .retrieve()
-//                        .bodyToMono(TokenDto.class)
-//                        .map(TokenDto::token);
-
-                Mono<ClientResponse> responseToken = webClient.get()
-                        .uri(endpoint.getUrl())
-                        .header("Content-Type", "application/json")
-                        .exchange();
-
-                responseMono.flatMap(response -> {
-                    if (response.statusCode().is2xxSuccessful()) {
-                        return response.bodyToMono(String.class);
-                    } else {
-                        return response.createException().flatMap(Mono::error);
-                    }
-                }).subscribe(
-                        responseBody -> LOGGER.info("Notification send"),
-                        error -> {
-                            sendNotification(endpoint.getUrl());
-                            LOGGER.info("Error: " + error.getMessage());
-                        }
-                );
+                        .retrieve()
+                        .bodyToMono(ClientResponse.class)
+                        .flatMap(response -> {
+                            if (response.statusCode().is2xxSuccessful()) {
+                                return response.bodyToMono(String.class);
+                            } else {
+                                return response.createException().flatMap(Mono::error);
+                            }
+                        })
+                        .subscribe(
+                                responseBody -> LOGGER.info("Notification send"),
+                                error -> {
+                                    sendNotification(endpoint.getUrl());
+                                    LOGGER.info("Error: " + error.getMessage());
+                                }
+                        );
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return false;
     }
 
     private void sendNotification(String url) {
         try {
-            WebClient webClient = WebClient.create(URL_TG);
-            Mono<ClientResponse> responseMono = webClient.post()
+            WebClient.create(URL_TG).post()
                     .uri("/notify")
                     .header("Content-Type", "application/json")
                     .bodyValue("Endpoint на " + url + " недоступен!")
-                    .exchange();
-            responseMono.flatMap(response -> {
-                if (response.statusCode().is2xxSuccessful()) {
-                    return response.bodyToMono(String.class);
-                } else {
-                    return response.createException().flatMap(Mono::error);
-                }
-            }).subscribe(
-                    responseBody -> LOGGER.info("Notification send"),
-                    error -> LOGGER.info("Error: " + error.getMessage())
-            );
-
+                    .retrieve()
+                    .bodyToMono(ClientResponse.class)
+                    .flatMap(response -> {
+                        if (response.statusCode().is2xxSuccessful()) {
+                            return response.bodyToMono(String.class);
+                        } else {
+                            return response.createException().flatMap(Mono::error);
+                        }
+                    }).subscribe(
+                            responseBody -> LOGGER.info("Notification send"),
+                            error -> LOGGER.info("Error: " + error.getMessage())
+                    );
         } catch (Exception e) {
             e.printStackTrace();
         }

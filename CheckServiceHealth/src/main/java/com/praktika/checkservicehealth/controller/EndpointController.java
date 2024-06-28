@@ -16,10 +16,7 @@ public class EndpointController {
     private final EndpointService endpointService;
 
     @GetMapping("/check")
-    public ResponseEntity<String> checkAllEndpoints() {
-        if (endpointService.checkAllEndpoints()) {
-            return ResponseEntity.ok().body("Все сервисы доступны");
-        }
-        return ResponseEntity.ok().body("Сервисы недоступны(отправлено сообщение в tg-bot)");
+    public void checkAllEndpoints() {
+        endpointService.checkAllEndpoints();
     }
 }
