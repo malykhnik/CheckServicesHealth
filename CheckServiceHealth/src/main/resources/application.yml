@@ -15,3 +15,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+url:
+  tg:
+    key: "http://localhost:9001"
+  endpoints:
+    key: "http://localhost:8080"
