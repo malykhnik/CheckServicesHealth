@@ -33,7 +33,7 @@ public class EndpointServiceImpl implements EndpointService {
     String URL_TG;
 
     @Override
-    @Scheduled(fixedRate = 5000) //каждые 5 сек
+    @Scheduled(fixedRate = 30000)
     public void checkAllEndpoints() {
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
@@ -48,10 +48,10 @@ public class EndpointServiceImpl implements EndpointService {
                         .header("Content-Type", "application/json")
                         .bodyValue(json)
                         .retrieve()
-                        .bodyToMono(JsonNode.class)
+                        .bodyToMono(TokenDto.class)
                         .flatMap(response -> {
-                            if (response.get("token") != null) {
-                                String token = response.get("token").asText();
+                            if (response.token() != null) {
+                                String token = response.token();
                                 return checkServiceAvailability(endpoint.getUrl(), token)
                                         .map(status -> new AuthResponse(token, endpoint.getUrl(), status));
                             } else {
