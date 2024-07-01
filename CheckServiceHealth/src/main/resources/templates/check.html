@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Service Health Status</title>
 </head>
 <body>
 
@@ -14,14 +14,16 @@
                     <table border="1" cellpadding="5">
                         <tr>
                             <td><span th:text="${el.url}"></span></td>
-                            <li th:each="s : ${el.services}">
+                        </tr>
+                        <tr>
+                            <td>
                                 <table border="1" cellpadding="5">
-                                    <tr>
-                                        <span th:text="${s.name}"></span>
-                                        <span th:text="${s.status}"></span>
+                                    <tr th:each="s : ${el.services}">
+                                        <td><span th:text="${s.name}"></span></td>
+                                        <td><span th:text="${s.status}"></span></td>
                                     </tr>
                                 </table>
-                            </li>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -38,14 +40,16 @@
                     <table border="1" cellpadding="5">
                         <tr>
                             <td><span th:text="${el.url}"></span></td>
-                            <li th:each="s : ${el.services}">
+                        </tr>
+                        <tr>
+                            <td>
                                 <table border="1" cellpadding="5">
-                                    <tr>
-                                        <span th:text="${s.name}"></span>
-                                        <span th:text="${s.status}"></span>
+                                    <tr th:each="s : ${el.services}">
+                                        <td><span th:text="${s.name}"></span></td>
+                                        <td><span th:text="${s.status}"></span></td>
                                     </tr>
                                 </table>
-                            </li>
+                            </td>
                         </tr>
                     </table>
                 </div>

@@ -16,12 +16,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.net.ContentHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -41,6 +41,8 @@ public class EndpointServiceImpl implements EndpointService {
     @Value("${url.check_status.key}")
     String CHECK_STATUS;
 
+    private final RestClient restClient = RestClient.create();
+
     @Override
     public List<EndpointStatusDto> checkAllEndpoints() {
         endpointStatusDtos = new ArrayList<>();
@@ -52,53 +54,49 @@ public class EndpointServiceImpl implements EndpointService {
 
             LOGGER.info(endpoint.getUrl());
 
-            WebClient.create(endpoint.getUrl()).post()
-                    .uri(GET_TOKEN)
-                    .header("Content-Type", "application/json")
-                    .bodyValue(loginEndpointDto)
-                    .retrieve()
-                    .bodyToMono(TokenDto.class)
-                    .flatMap(response -> {
-                        String token = response.getToken();
-                        return checkServiceAvailability(endpoint.getUrl(), token);
-                    })
-                    .subscribe(
-                            authResponse -> {
-                                LOGGER.info("authResponse: {}", authResponse);
-                                EndpointStatusDto endpointStatusDto = new EndpointStatusDto();
-                                endpointStatusDto.setRole(endpoint.getRole().getName());
-                                endpointStatusDto.setUrl(endpoint.getUrl());
-                                for (var s : authResponse.getServices()) {
-                                    LOGGER.info(s.toString());
-                                    if ("inactive".equals(s.getStatus())) {
-                                        String message = String.format("Сервис %s не работает на эндпоинте %s", s.getName(), endpoint.getUrl());
-                                        notificationTg.sendNotification(message);
-                                    }
-                                    endpointStatusDto.getServices().add(s);
-                                }
-                                endpointStatusDtos.add(endpointStatusDto);
-                                LOGGER.info(endpointStatusDtos.toString()+ "sdjasdfasd");
-                            },
-                            error -> {
-                                notificationTg.sendNotification(String.format("Сервис на эндпоинте %s не отвечает", endpoint.getUrl()));
-                                List<ServiceDto> list = new ArrayList<>();
-                                list.add(new ServiceDto("endpoint", "no connection"));
-                                endpointStatusDtos.add(new EndpointStatusDto(endpoint.getRole().getName(),endpoint.getUrl(), list));
-                                LOGGER.info("Error: " + error.getMessage());
-                            }
+            try {
+                TokenDto tokenDto = restClient.post()
+                        .uri(endpoint.getUrl() + GET_TOKEN)
+                        .header("Content-Type", "application/json")
+                        .body(loginEndpointDto)
+                        .retrieve()
+                        .body(TokenDto.class);
 
-                    );
+                String token = tokenDto.getToken();
+                AuthResponse authResponse = checkServiceAvailability(endpoint.getUrl(), token);
+
+                LOGGER.info("authResponse: {}", authResponse);
+                EndpointStatusDto endpointStatusDto = new EndpointStatusDto();
+                endpointStatusDto.setRole(endpoint.getRole().getName());
+                endpointStatusDto.setUrl(endpoint.getUrl());
+
+                for (var s : authResponse.getServices()) {
+                    LOGGER.info(s.toString());
+                    if ("inactive".equals(s.getStatus())) {
+                        String message = String.format("Сервис %s не работает на эндпоинте %s", s.getName(), endpoint.getUrl());
+                        notificationTg.sendNotification(message);
+                    }
+                    endpointStatusDto.getServices().add(s);
+                }
+                endpointStatusDtos.add(endpointStatusDto);
+
+            } catch (RestClientException e) {
+                notificationTg.sendNotification(String.format("Сервис на эндпоинте %s не отвечает", endpoint.getUrl()));
+                List<ServiceDto> list = new ArrayList<>();
+                list.add(new ServiceDto("endpoint", "no connection"));
+                endpointStatusDtos.add(new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
+                LOGGER.info("Error: " + e.getMessage());
+            }
         });
 
         return endpointStatusDtos;
     }
 
-    private Mono<AuthResponse> checkServiceAvailability(String url, String token) {
-        return WebClient.create(url).get()
-                .uri(CHECK_STATUS)
+    private AuthResponse checkServiceAvailability(String url, String token) {
+        return restClient.get()
+                .uri(url + CHECK_STATUS)
                 .header("token", token)
                 .retrieve()
-                .bodyToMono(AuthResponse.class);
+                .body(AuthResponse.class);
     }
-
 }
