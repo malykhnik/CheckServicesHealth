@@ -1,34 +1,23 @@
 package com.praktika.checkservicehealth.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.praktika.checkservicehealth.dto.*;
 import com.praktika.checkservicehealth.entity.Endpoint;
 import com.praktika.checkservicehealth.repository.EndpointRepo;
 import com.praktika.checkservicehealth.service.EndpointService;
 import com.praktika.checkservicehealth.service.NotificationTg;
-import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 @Service
-@Data
 @RequiredArgsConstructor
 public class EndpointServiceImpl implements EndpointService {
     private final Logger LOGGER = LoggerFactory.getLogger(EndpointServiceImpl.class);
@@ -69,6 +58,7 @@ public class EndpointServiceImpl implements EndpointService {
                 EndpointStatusDto endpointStatusDto = new EndpointStatusDto();
                 endpointStatusDto.setRole(endpoint.getRole().getName());
                 endpointStatusDto.setUrl(endpoint.getUrl());
+                endpointStatusDto.setServices(new ArrayList<>());
 
                 for (var s : authResponse.getServices()) {
                     LOGGER.info(s.toString());
