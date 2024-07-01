@@ -18,5 +18,9 @@ spring:
 url:
   tg:
     key: "http://localhost:9001"
-  endpoints:
-    key: "http://localhost:8080"
+  tg_req:
+    key: "/notify"
+  get_token:
+    key: "get-token"
+  check_status:
+    key: "check-status"

@@ -27,10 +27,15 @@ import java.util.Optional;
 public class EndpointServiceImpl implements EndpointService {
     private final Logger LOGGER = LoggerFactory.getLogger(EndpointServiceImpl.class);
     private final EndpointRepo endpointRepo;
-    @Value("${url.endpoints.key}")
-    String URL_ENDPOINTS;
+
     @Value("${url.tg.key}")
     String URL_TG;
+    @Value("${url.tg_req.key}")
+    String TG_REQUEST;
+    @Value("${url.get_token.key}")
+    String GET_TOKEN;
+    @Value("${url.check_status.key}")
+    String CHECK_STATUS;
 
     @Override
     @Scheduled(fixedRate = 30000)
@@ -43,20 +48,16 @@ public class EndpointServiceImpl implements EndpointService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String json = objectMapper.writeValueAsString(loginEndpointDto);
 
-                WebClient.create(URL_ENDPOINTS).post()
-                        .uri(endpoint.getUrl())
+                WebClient.create(endpoint.getUrl()).post()
+                        .uri(GET_TOKEN)
                         .header("Content-Type", "application/json")
                         .bodyValue(json)
                         .retrieve()
                         .bodyToMono(TokenDto.class)
                         .flatMap(response -> {
-                            if (response.token() != null) {
-                                String token = response.token();
-                                return checkServiceAvailability(endpoint.getUrl(), token)
-                                        .map(status -> new AuthResponse(token, endpoint.getUrl(), status));
-                            } else {
-                                return Mono.error(new RuntimeException("Токен не найден"));
-                            }
+                            String token = response.token();
+                            return checkServiceAvailability(endpoint.getUrl(), token)
+                                    .map(status -> new AuthResponse(token, endpoint.getUrl(), status));
                         })
                         .subscribe(
                                 endpointStatus -> {
@@ -78,8 +79,8 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     private Mono<String> checkServiceAvailability(String url, String token) {
-        return WebClient.create(URL_ENDPOINTS).get()
-                .uri(url)
+        return WebClient.create(url).get()
+                .uri(CHECK_STATUS)
                 .header("token", token)
                 .retrieve()
                 .bodyToMono(ClientResponse.class)
@@ -95,7 +96,7 @@ public class EndpointServiceImpl implements EndpointService {
     private void sendNotification(String url) {
         try {
             WebClient.create(URL_TG).post()
-                    .uri("/notify")
+                    .uri(TG_REQUEST)
                     .header("Content-Type", "application/json")
                     .bodyValue("Endpoint на " + url + " недоступен!")
                     .retrieve()
