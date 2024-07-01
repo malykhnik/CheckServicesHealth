@@ -1,3 +1,15 @@
 package com.praktika.checkservicehealth.dto;
 
-public record ServiceDto(String name, String status) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ServiceDto {
+    private String name;
+    private String status;
+}

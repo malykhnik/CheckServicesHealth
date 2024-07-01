@@ -1,7 +1,6 @@
 package com.praktika.checkservicehealth.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.praktika.checkservicehealth.dto.AuthResponse;
 import com.praktika.checkservicehealth.dto.LoginEndpointDto;
@@ -20,7 +19,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,29 +44,36 @@ public class EndpointServiceImpl implements EndpointService {
             try {
                 LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
                 ObjectMapper objectMapper = new ObjectMapper();
-                String json = objectMapper.writeValueAsString(loginEndpointDto);
+
+                LOGGER.info(endpoint.getUrl());
 
                 WebClient.create(endpoint.getUrl()).post()
                         .uri(GET_TOKEN)
                         .header("Content-Type", "application/json")
-                        .bodyValue(json)
+                        .bodyValue(loginEndpointDto)
                         .retrieve()
                         .bodyToMono(TokenDto.class)
-                        .flatMap(response -> {
-                            String token = response.token();
-                            return checkServiceAvailability(endpoint.getUrl(), token)
-                                    .map(status -> new AuthResponse(token, endpoint.getUrl(), status));
-                        })
                         .subscribe(
-                                endpointStatus -> {
+                                response -> {
                                     try {
-                                        LOGGER.info("Response: {}", objectMapper.writeValueAsString(endpointStatus));
+
+
+
+
+
+
+
+                                        String token = response.getToken();
+                                        Mono<AuthResponse> authResponse = checkServiceAvailability(endpoint.getUrl(), token);
+                                        LOGGER.info("authResponse: {}", authResponse);
+                                        LOGGER.info("Response: {}", objectMapper.writeValueAsString(response.getToken()));
                                     } catch (JsonProcessingException e) {
                                         throw new RuntimeException(e);
                                     }
                                 },
                                 error -> {
                                     sendNotification(endpoint.getUrl());
+                                    LOGGER.info("........../get_token");
                                     LOGGER.info("Error: " + error.getMessage());
                                 }
                         );
@@ -78,7 +83,7 @@ public class EndpointServiceImpl implements EndpointService {
         }
     }
 
-    private Mono<String> checkServiceAvailability(String url, String token) {
+    private Mono<AuthResponse> checkServiceAvailability(String url, String token) {
         return WebClient.create(url).get()
                 .uri(CHECK_STATUS)
                 .header("token", token)
@@ -86,9 +91,9 @@ public class EndpointServiceImpl implements EndpointService {
                 .bodyToMono(ClientResponse.class)
                 .flatMap(response -> {
                     if (response.statusCode().is2xxSuccessful()) {
-                        return Mono.just("active");
+                        return Mono.just(new AuthResponse(token, url, "active"));
                     } else {
-                        return Mono.just("inactive");
+                        return Mono.just(new AuthResponse(token, url, "inactive"));
                     }
                 });
     }

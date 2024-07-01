@@ -1,4 +1,15 @@
 package com.praktika.checkservicehealth.dto;
 
-public record LoginEndpointDto(String login, String password_hash) {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class LoginEndpointDto {
+    private String login;
+    private String password_hash;
 }

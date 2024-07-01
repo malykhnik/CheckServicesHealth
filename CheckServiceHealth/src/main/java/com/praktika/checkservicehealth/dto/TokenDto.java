@@ -1,4 +1,14 @@
 package com.praktika.checkservicehealth.dto;
 
-public record TokenDto(String token) {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class TokenDto {
+    private String token;
 }
