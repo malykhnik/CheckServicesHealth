@@ -24,6 +24,8 @@ import reactor.core.publisher.Mono;
 import java.net.ContentHandler;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Data
@@ -44,6 +46,7 @@ public class EndpointServiceImpl implements EndpointService {
         endpointStatusDtos = new ArrayList<>();
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
+
         endpoints.forEach(endpoint -> {
             LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
 
@@ -72,7 +75,6 @@ public class EndpointServiceImpl implements EndpointService {
                                         notificationTg.sendNotification(message);
                                     }
                                     endpointStatusDto.getServices().add(s);
-
                                 }
                                 endpointStatusDtos.add(endpointStatusDto);
                                 LOGGER.info(endpointStatusDtos.toString()+ "sdjasdfasd");
@@ -87,6 +89,7 @@ public class EndpointServiceImpl implements EndpointService {
 
                     );
         });
+
         return endpointStatusDtos;
     }
 
