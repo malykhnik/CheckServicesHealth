@@ -40,47 +40,42 @@ public class EndpointServiceImpl implements EndpointService {
     public void checkAllEndpoints() {
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
-        for (Endpoint endpoint : endpoints) {
-            try {
-                LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
-                ObjectMapper objectMapper = new ObjectMapper();
+        endpoints.forEach(endpoint -> {
+            LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
+            ObjectMapper objectMapper = new ObjectMapper();
 
-                LOGGER.info(endpoint.getUrl());
+            LOGGER.info(endpoint.getUrl());
 
-                WebClient.create(endpoint.getUrl()).post()
-                        .uri(GET_TOKEN)
-                        .header("Content-Type", "application/json")
-                        .bodyValue(loginEndpointDto)
-                        .retrieve()
-                        .bodyToMono(TokenDto.class)
-                        .subscribe(
-                                response -> {
+            WebClient.create(endpoint.getUrl()).post()
+                    .uri(GET_TOKEN)
+                    .header("Content-Type", "application/json")
+                    .bodyValue(loginEndpointDto)
+                    .retrieve()
+                    .bodyToMono(TokenDto.class)
+                    .flatMap(response -> {
+                        String token = response.getToken();
+                        return checkServiceAvailability(endpoint.getUrl(), token)
+                                .map(authResponse -> {
                                     try {
-
-
-
-
-
-
-
-                                        String token = response.getToken();
-                                        Mono<AuthResponse> authResponse = checkServiceAvailability(endpoint.getUrl(), token);
                                         LOGGER.info("authResponse: {}", authResponse);
                                         LOGGER.info("Response: {}", objectMapper.writeValueAsString(response.getToken()));
+                                        return authResponse;
                                     } catch (JsonProcessingException e) {
                                         throw new RuntimeException(e);
                                     }
-                                },
-                                error -> {
-                                    sendNotification(endpoint.getUrl());
-                                    LOGGER.info("........../get_token");
-                                    LOGGER.info("Error: " + error.getMessage());
-                                }
-                        );
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+                                });
+                    })
+                    .subscribe(
+                            authResponse -> {
+                                LOGGER.info("authResponse: {}", authResponse);
+                            },
+                            error -> {
+                                sendNotification(endpoint.getUrl());
+                                LOGGER.info("........../get_token");
+                                LOGGER.info("Error: " + error.getMessage());
+                            }
+                    );
+        });
     }
 
     private Mono<AuthResponse> checkServiceAvailability(String url, String token) {
@@ -88,15 +83,9 @@ public class EndpointServiceImpl implements EndpointService {
                 .uri(CHECK_STATUS)
                 .header("token", token)
                 .retrieve()
-                .bodyToMono(ClientResponse.class)
-                .flatMap(response -> {
-                    if (response.statusCode().is2xxSuccessful()) {
-                        return Mono.just(new AuthResponse(token, url, "active"));
-                    } else {
-                        return Mono.just(new AuthResponse(token, url, "inactive"));
-                    }
-                });
+                .bodyToMono(AuthResponse.class);
     }
+
 
     private void sendNotification(String url) {
         try {
