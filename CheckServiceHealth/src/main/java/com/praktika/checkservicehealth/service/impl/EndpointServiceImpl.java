@@ -2,47 +2,50 @@ package com.praktika.checkservicehealth.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.praktika.checkservicehealth.dto.AuthResponse;
-import com.praktika.checkservicehealth.dto.LoginEndpointDto;
-import com.praktika.checkservicehealth.dto.TokenDto;
+import com.praktika.checkservicehealth.dto.*;
 import com.praktika.checkservicehealth.entity.Endpoint;
 import com.praktika.checkservicehealth.repository.EndpointRepo;
 import com.praktika.checkservicehealth.service.EndpointService;
+import com.praktika.checkservicehealth.service.NotificationTg;
+import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.ContentHandler;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Data
 @RequiredArgsConstructor
 public class EndpointServiceImpl implements EndpointService {
     private final Logger LOGGER = LoggerFactory.getLogger(EndpointServiceImpl.class);
     private final EndpointRepo endpointRepo;
+    private final NotificationTg notificationTg;
+    private List<EndpointStatusDto> endpointStatusDtos;
 
-    @Value("${url.tg.key}")
-    String URL_TG;
-    @Value("${url.tg_req.key}")
-    String TG_REQUEST;
     @Value("${url.get_token.key}")
     String GET_TOKEN;
     @Value("${url.check_status.key}")
     String CHECK_STATUS;
 
     @Override
-    @Scheduled(fixedRate = 30000)
-    public void checkAllEndpoints() {
+    public List<EndpointStatusDto> checkAllEndpoints() {
+        endpointStatusDtos = new ArrayList<>();
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
         endpoints.forEach(endpoint -> {
             LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
-            ObjectMapper objectMapper = new ObjectMapper();
 
             LOGGER.info(endpoint.getUrl());
 
@@ -54,28 +57,37 @@ public class EndpointServiceImpl implements EndpointService {
                     .bodyToMono(TokenDto.class)
                     .flatMap(response -> {
                         String token = response.getToken();
-                        return checkServiceAvailability(endpoint.getUrl(), token)
-                                .map(authResponse -> {
-                                    try {
-                                        LOGGER.info("authResponse: {}", authResponse);
-                                        LOGGER.info("Response: {}", objectMapper.writeValueAsString(response.getToken()));
-                                        return authResponse;
-                                    } catch (JsonProcessingException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                });
+                        return checkServiceAvailability(endpoint.getUrl(), token);
                     })
                     .subscribe(
                             authResponse -> {
                                 LOGGER.info("authResponse: {}", authResponse);
+                                EndpointStatusDto endpointStatusDto = new EndpointStatusDto();
+                                endpointStatusDto.setRole(endpoint.getRole().getName());
+                                endpointStatusDto.setUrl(endpoint.getUrl());
+                                for (var s : authResponse.getServices()) {
+                                    LOGGER.info(s.toString());
+                                    if ("inactive".equals(s.getStatus())) {
+                                        String message = String.format("Сервис %s не работает на эндпоинте %s", s.getName(), endpoint.getUrl());
+                                        notificationTg.sendNotification(message);
+                                    }
+                                    endpointStatusDto.getServices().add(s);
+
+                                }
+                                endpointStatusDtos.add(endpointStatusDto);
+                                LOGGER.info(endpointStatusDtos.toString()+ "sdjasdfasd");
                             },
                             error -> {
-                                sendNotification(endpoint.getUrl());
-                                LOGGER.info("........../get_token");
+                                notificationTg.sendNotification(String.format("Сервис на эндпоинте %s не отвечает", endpoint.getUrl()));
+                                List<ServiceDto> list = new ArrayList<>();
+                                list.add(new ServiceDto("endpoint", "no connection"));
+                                endpointStatusDtos.add(new EndpointStatusDto(endpoint.getRole().getName(),endpoint.getUrl(), list));
                                 LOGGER.info("Error: " + error.getMessage());
                             }
+
                     );
         });
+        return endpointStatusDtos;
     }
 
     private Mono<AuthResponse> checkServiceAvailability(String url, String token) {
@@ -86,27 +98,4 @@ public class EndpointServiceImpl implements EndpointService {
                 .bodyToMono(AuthResponse.class);
     }
 
-
-    private void sendNotification(String url) {
-        try {
-            WebClient.create(URL_TG).post()
-                    .uri(TG_REQUEST)
-                    .header("Content-Type", "application/json")
-                    .bodyValue("Endpoint на " + url + " недоступен!")
-                    .retrieve()
-                    .bodyToMono(ClientResponse.class)
-                    .flatMap(response -> {
-                        if (response.statusCode().is2xxSuccessful()) {
-                            return response.bodyToMono(String.class);
-                        } else {
-                            return response.createException().flatMap(Mono::error);
-                        }
-                    }).subscribe(
-                            responseBody -> LOGGER.info("Notification send"),
-                            error -> LOGGER.info("Error: " + error.getMessage())
-                    );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:if="${#authorization.expression('hasRole(''ROLE_admin'')')}">
+    <div class="block">
+        <ul>
+            <li th:each="el : ${list}">
+                <div class="product">
+                    <table border="1" cellpadding="5">
+                        <tr>
+                            <td><span th:text="${el.url}"></span></td>
+                            <li th:each="s : ${el.services}">
+                                <table border="1" cellpadding="5">
+                                    <tr>
+                                        <span th:text="${s.name}"></span>
+                                        <span th:text="${s.status}"></span>
+                                    </tr>
+                                </table>
+                            </li>
+                        </tr>
+                    </table>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div th:if="${#authorization.expression('hasRole(''ROLE_user'')')}">
+    <div class="block">
+        <ul>
+            <li th:each="el : ${list}">
+                <div class="product" th:if="${el.role.equals('user')}">
+                    <table border="1" cellpadding="5">
+                        <tr>
+                            <td><span th:text="${el.url}"></span></td>
+                            <li th:each="s : ${el.services}">
+                                <table border="1" cellpadding="5">
+                                    <tr>
+                                        <span th:text="${s.name}"></span>
+                                        <span th:text="${s.status}"></span>
+                                    </tr>
+                                </table>
+                            </li>
+                        </tr>
+                    </table>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

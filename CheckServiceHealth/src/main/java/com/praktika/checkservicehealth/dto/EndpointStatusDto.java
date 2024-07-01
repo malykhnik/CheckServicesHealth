@@ -5,10 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collections;
+import java.util.List;
+
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-    private String username;
-    private String password;
+@Builder
+public class EndpointStatusDto {
+    private String role;
+    private String url;
+    private List<ServiceDto> services;
+
 }

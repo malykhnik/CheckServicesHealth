@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/registration.css"/>
+</head>
+
+<body>
+<div class="login_form">
+    <form th:method="POST" th:action="@{/api/auth/signUp}" th:object="${userForm}">
+        <h1>Регистрация</h1>
+        <div class="username_field">
+            <input type="text" th:field="*{username}" placeholder="Username"
+                   autofocus="true" required>
+        </div>
+        <div class="password_field">
+            <input type="password" th:field="*{password}" placeholder="Password" required>
+        </div>
+
+        <input type="submit" value="Sign Up">
+        <input class="sbm1" type="button" value="Sign In" onclick="func()"/>
+        <script>
+            function func() {
+                window.location.replace("/api/auth/login");
+            }
+        </script>
+    </form>
+    <span th:text="${usernameError}"></span>
+</div>
+
+</body>
+
+</html>

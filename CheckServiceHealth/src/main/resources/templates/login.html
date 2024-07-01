@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Please Log In</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css"/>
+</head>
+
+<body>
+<div class="login_form">
+    <h1>Please Log In</h1>
+    <div th:if="${param.error}">
+        Invalid username and password.
+    </div>
+    <div th:if="${param.logout}">
+        You have been logged out.
+    </div>
+    <form th:action="@{/api/auth/signIn}" method="post">
+        <div>
+            <input type="text" name="username" placeholder="Username" required/>
+        </div>
+        <div>
+            <input type="password" name="password" placeholder="Password" required/>
+        </div>
+        <input class="sbm1" type="submit" value="Log in"/>
+        <input class="sbm2" type="button" value="Sign Up" onclick="func()"/>
+        <script>
+            function func() {
+                window.location.replace("/api/auth/registration");
+            }
+        </script>
+    </form>
+
+</div>
+</body>
+</html>
