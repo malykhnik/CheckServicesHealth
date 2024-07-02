@@ -15,6 +15,13 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  mail:
+    protocol: smtp
+    host: smtp.yandex.ru
+    port: 465
+    username: s3v3nny
+    password: Thes3v3nnyomg77
+
 url:
   tg:
     key: "http://localhost:9001"
