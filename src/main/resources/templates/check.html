@@ -8,28 +8,23 @@
     span[text="active"] {
         color: #3e8e41;
     }
-
     span[text="inactive"] {
         color: red;
     }
-
     span[text="no connection"] {
         color: black;
     }
-
     .green {
         background-color: green;
-        color: green
+        color: green;
     }
-
     .red {
         background-color: red;
-        color: red
+        color: red;
     }
-
     .black {
         background-color: black;
-        color: black
+        color: black;
     }
 </style>
 <body>
@@ -50,9 +45,9 @@
                             <table border="1" cellpadding="5">
                                 <tr th:each="s : ${el.services}">
                                     <td><span th:text="${s.name}"></span></td>
-                                    <div class="green" th:if='${s.status == "active"}'>111</div>
-                                    <div class="red" th:if='${s.status == "inactive"}'>111</div>
-                                    <div class="black" th:if='${s.status == "no connection"}'>111</div>
+                                    <td class="green" th:if='${s.status == "active"}'><span th:text="${s.status}"></span></td>
+                                    <td class="red" th:if='${s.status == "inactive"}'><span th:text="${s.status}"></span></td>
+                                    <td class="black" th:if='${s.status == "no connection"}'><span th:text="${s.status}"></span></td>
                                 </tr>
                             </table>
                         </td>
