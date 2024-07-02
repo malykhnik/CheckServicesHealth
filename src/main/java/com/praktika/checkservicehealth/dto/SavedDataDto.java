@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 public class SavedDataDto {
     private List<EndpointStatusDto> statusEndpoints;
-    private Instant time;
+    private String time;
 }

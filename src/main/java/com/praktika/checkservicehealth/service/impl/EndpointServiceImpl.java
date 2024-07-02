@@ -16,6 +16,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,8 +85,9 @@ public class EndpointServiceImpl implements EndpointService {
                 LOGGER.info("Error: " + e.getMessage());
             }
         });
-
-        savedDataDto = new SavedDataDto(endpointStatusDtos, Instant.now());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd-yy:HH-mm-ss");
+        String formattedTime = dtf.format(LocalDateTime.now());
+        savedDataDto = new SavedDataDto(endpointStatusDtos, formattedTime);
     }
 
     private AuthResponse checkServiceAvailability(String url, String token) {
@@ -98,7 +101,7 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public SavedDataDto getSavedData() {
         if (savedDataDto == null) {
-           checkAllEndpoints();
+            checkAllEndpoints();
         }
         return savedDataDto;
     }
