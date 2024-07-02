@@ -48,16 +48,20 @@ public class EndpointController {
                 LOGGER.info(se.toString());
             }
         }
+
+        List<EndpointStatusDto> outputList = new ArrayList<>();
         String formattedRole = currentRole.split("_")[1];
         if(!formattedRole.equals("admin")) {
             for (var endpoint : statusEndpoints) {
                 if (endpoint.getRole().equals(formattedRole)) {
-                    statusEndpoints.remove(endpoint);
+                    outputList.add(endpoint);
                 }
             }
+        } else {
+            outputList = statusEndpoints;
         }
 
-        model.addAttribute("list", statusEndpoints);
+        model.addAttribute("list", outputList);
 
         return "check";
     }
