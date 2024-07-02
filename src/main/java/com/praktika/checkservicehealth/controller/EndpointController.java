@@ -30,7 +30,6 @@ import java.util.Set;
 public class EndpointController {
     private final Logger LOGGER = LoggerFactory.getLogger(EndpointController.class);
     private final EndpointService endpointService;
-    private final NotificationTg notificationTg;
 
     @GetMapping("/check")
     public String checkAllEndpoints(Model model) {
@@ -47,7 +46,6 @@ public class EndpointController {
         String currentRole = roles.get(0);
         for (var se : statusEndpoints) {
             if (currentRole.contains(se.getRole())) {
-                notificationTg.sendNotification(se.toString());
                 LOGGER.info(se.toString());
             }
         }
