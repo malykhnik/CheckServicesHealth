@@ -1,0 +1,110 @@
+.login_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.login_form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+}
+
+.login_form h1 {
+    margin-bottom: 20px;
+}
+
+.login_form input[type="tel"],
+.login_form input[type="text"],
+.login_form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login_form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.login_form a {
+    margin-top: 10px;
+    text-decoration: none;
+    color: #4CAF50;
+}
+
+.login_form input[type="button"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+/* Скрываем стандартный кружок radio button */
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Стилизация прямоугольника */
+input[type="radio"] {
+    width: 20px;  /* Ширина прямоугольника */
+    height: 20px; /* Высота прямоугольника */
+    border: 1px solid #ccc; /* Граница */
+    border-radius: 5px; /* Скругление углов */
+    cursor: pointer; /* Курсор при наведении */
+    margin-right: 10px; /* Отступ справа */
+    display: inline-block; /* Для корректного отображения label */
+}
+
+/* Стилизация при выборе */
+input[type="radio"]:checked {
+    background-color: #19c410; /* Светло-зеленый фон при выборе */
+    border-color: green;      /* Зеленая граница при выборе */
+}
+
+/* Стилизация label */
+label {
+    cursor: pointer;        /* Курсор при наведении */
+    position: relative;     /* Для позиционирования текста */
+    top: -5px;              /* Вертикальное выравнивание текста */
+    margin-left: 1px;       /* Отступ слева от текста */
+}
+
+span {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+input[type="submit"]:hover {
+    background-color: #3e8e41; /* Темно-зеленый цвет при наведении */
+}
+
+input[type="button"]:hover {
+    background-color: #3e8e41; /* Темно-зеленый цвет при наведении */
+}
+
+input[type="radio"]:hover {
+    background-color: #c2f0c2; /* Темно-зеленый цвет при наведении */
+}

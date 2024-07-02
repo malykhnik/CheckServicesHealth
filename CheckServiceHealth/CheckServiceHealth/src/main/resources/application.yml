@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: CheckServiceHealth
+  datasource:
+    url: jdbc:postgresql://sloth-2.suslovd.ru:9132/health_microservice
+    password: pass
+    username: user
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+url:
+  tg:
+    key: "http://localhost:9001"
+  tg_req:
+    key: "/notify"
+  get_token:
+    key: "get-token"
+  check_status:
+    key: "check-status"
