@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<div th:if="${#authorization.expression('hasRole(''ROLE_user'')')}">
+<div th:unless="${#authorization.expression('hasRole(''ROLE_user'')')}">
     <div class="block">
         <ul>
             <li th:each="el : ${list}">
