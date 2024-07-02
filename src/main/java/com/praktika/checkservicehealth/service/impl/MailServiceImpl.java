@@ -25,7 +25,7 @@ public class MailServiceImpl implements MailService {
         List<Email> emails = emailRepo.findAll();
 
         Thread thread = new Thread(() -> {
-            for(Email e : emails) {
+            for (Email e : emails) {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(e.getReceiver());
                 message.setSubject("Отключение сервиса");
@@ -35,8 +35,7 @@ public class MailServiceImpl implements MailService {
                 } catch (MailException ex) {
                     ex.printStackTrace();
                 }
-                logger.info("message sended to: {}", e.getReceiver());
-                
+                logger.info("message sended to: {}", e.getReceiver());   
             }
         });
         thread.start();
