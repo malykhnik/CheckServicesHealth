@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class EndpointServiceImpl implements EndpointService {
     private final NotificationTg notificationTg;
     private SavedDataDto savedDataDto;
     private List<EndpointStatusDto> endpointStatusDtos;
+    private final MailServiceImpl mailService;
 
 
     @Value("${url.get_token.key}")
@@ -72,13 +72,16 @@ public class EndpointServiceImpl implements EndpointService {
                     if ("inactive".equals(s.getStatus())) {
                         String message = String.format("Сервис %s не работает на эндпоинте %s", s.getName(), endpoint.getUrl());
                         notificationTg.sendNotification(message);
+                        mailService.sendMail(message);
                     }
                     endpointStatusDto.getServices().add(s);
                 }
                 endpointStatusDtos.add(endpointStatusDto);
 
             } catch (RestClientException e) {
-                notificationTg.sendNotification(String.format("Сервис на эндпоинте %s не отвечает", endpoint.getUrl()));
+                String message = String.format("Сервис на эндпоинте %s не отвечает", endpoint.getUrl());
+                notificationTg.sendNotification(message);
+                mailService.sendMail(message);
                 List<ServiceDto> list = new ArrayList<>();
                 list.add(new ServiceDto("endpoint", "no connection"));
                 endpointStatusDtos.add(new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
