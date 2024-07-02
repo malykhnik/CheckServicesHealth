@@ -1,27 +1,20 @@
 package com.praktika.checkservicehealth.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "endpoints")
+@Table(name = "roles")
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor
-public class Endpoint {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-
-    private String password;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-
-    private String url;
-
+    @Column(unique = true)
+    private String name;
 }

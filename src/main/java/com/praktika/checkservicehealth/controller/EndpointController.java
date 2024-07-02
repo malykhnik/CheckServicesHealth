@@ -33,7 +33,6 @@ public class EndpointController {
     @GetMapping("/check")
     public String checkAllEndpoints(Model model) {
         List<EndpointStatusDto> statusEndpoints = endpointService.checkAllEndpoints();
-        model.addAttribute("list", statusEndpoints);
 
         List<String> roles = new ArrayList<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -49,6 +48,17 @@ public class EndpointController {
                 LOGGER.info(se.toString());
             }
         }
+        String formattedRole = currentRole.split("_")[1];
+        if(!formattedRole.equals("admin")) {
+            for (var endpoint : statusEndpoints) {
+                if (endpoint.getRole().equals(formattedRole)) {
+                    statusEndpoints.remove(endpoint);
+                }
+            }
+        }
+
+        model.addAttribute("list", statusEndpoints);
+
         return "check";
     }
 
