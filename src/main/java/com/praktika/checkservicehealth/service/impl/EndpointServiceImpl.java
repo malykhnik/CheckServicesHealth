@@ -85,7 +85,7 @@ public class EndpointServiceImpl implements EndpointService {
                 LOGGER.info("Error: " + e.getMessage());
             }
         });
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd-yy:HH-mm-ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedTime = dtf.format(LocalDateTime.now());
         savedDataDto = new SavedDataDto(endpointStatusDtos, formattedTime);
     }
