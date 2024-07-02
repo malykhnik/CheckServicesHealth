@@ -20,8 +20,8 @@
     .red {
         color: red;
     }
-    .blue {
-        color: blue;
+    .black {
+        color: black;
     }
 </style>
 <body>
@@ -44,7 +44,7 @@
                                     <td><span th:text="${s.name}"></span></td>
                                     <td class="green" th:if='${s.status == "active"}'><span th:text="${s.status}"></span></td>
                                     <td class="red" th:if='${s.status == "inactive"}'><span th:text="${s.status}"></span></td>
-                                    <td class="blue" th:else='${s.status == "no connection"}'><span th:text="${s.status}"></span></td>
+                                    <td class="black" th:if='${s.status == "no connection"}'><span th:text="${s.status}"></span></td>
                                 </tr>
                             </table>
                         </td>
