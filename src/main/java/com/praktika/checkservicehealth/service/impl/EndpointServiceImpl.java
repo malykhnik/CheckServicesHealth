@@ -42,6 +42,9 @@ public class EndpointServiceImpl implements EndpointService {
     @Scheduled(fixedRate = 5000)
     public void checkAllEndpoints() {
         endpointStatusDtos = new ArrayList<>();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedTime = dtf.format(LocalDateTime.now());
+
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
 
@@ -70,7 +73,7 @@ public class EndpointServiceImpl implements EndpointService {
                 for (var s : authResponse.getServices()) {
                     LOGGER.info(s.toString());
                     if ("inactive".equals(s.getStatus())) {
-                        String message = String.format("Сервис %s не работает на эндпоинте %s", s.getName(), endpoint.getUrl());
+                        String message = String.format("Сервис %s не работает на эндпоинте %s. %s", s.getName(), endpoint.getUrl(), formattedTime);
                         notificationTg.sendNotification(message);
                         mailService.sendMail(message);
                     }
@@ -79,7 +82,7 @@ public class EndpointServiceImpl implements EndpointService {
                 endpointStatusDtos.add(endpointStatusDto);
 
             } catch (RestClientException e) {
-                String message = String.format("Сервис на эндпоинте %s не отвечает", endpoint.getUrl());
+                String message = String.format("Сервис на эндпоинте %s не отвечает. %s", endpoint.getUrl(), formattedTime);
                 notificationTg.sendNotification(message);
                 mailService.sendMail(message);
                 List<ServiceDto> list = new ArrayList<>();
@@ -88,8 +91,7 @@ public class EndpointServiceImpl implements EndpointService {
                 LOGGER.info("Error: " + e.getMessage());
             }
         });
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedTime = dtf.format(LocalDateTime.now());
+
         savedDataDto = new SavedDataDto(endpointStatusDtos, formattedTime);
     }
 

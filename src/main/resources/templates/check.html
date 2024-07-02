@@ -3,37 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Service Health Status</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/check.css"/>
 </head>
-<style>
-    span[text="active"] {
-        color: #3e8e41;
-    }
-    span[text="inactive"] {
-        color: red;
-    }
-    span[text="no connection"] {
-        color: black;
-    }
-    .green {
-        background-color: green;
-        color: green;
-    }
-    .red {
-        background-color: red;
-        color: red;
-    }
-    .black {
-        background-color: black;
-        color: black;
-    }
-</style>
 <body>
 
 <div class="block">
     <ul>
         <li th:each="el : ${list.statusEndpoints}">
             <div class="product">
-                <table border="1" cellpadding="5">
+                <table>
                     <tr>
                         <td><span th:text="${el.url}"></span></td>
                     </tr>
@@ -57,7 +35,24 @@
         </li>
     </ul>
 </div>
-</div>
 
+<!--<div class="block">-->
+<!--    <div th:each="el : ${list.statusEndpoints}">-->
+<!--        <div class="product">-->
+
+<!--            <div><span th:text="${el.url}"></span></div>-->
+
+<!--            <div><span th:text="${list.time}"></span></div>-->
+
+<!--            <div th:each="s : ${el.services}">-->
+<!--                <div><span th:text="${s.name}"></span></div>-->
+<!--                <div class="green" th:if='${s.status == "active"}'><span th:text="${s.status}"></span></div>-->
+<!--                <div class="red" th:if='${s.status == "inactive"}'><span th:text="${s.status}"></span></div>-->
+<!--                <div class="black" th:if='${s.status == "no connection"}'><span th:text="${s.status}"></span></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</div>-->
 </body>
 </html>
