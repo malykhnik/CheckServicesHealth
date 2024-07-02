@@ -6,56 +6,32 @@
 </head>
 <body>
 
-<div th:if="${#authorization.expression('hasRole(''ROLE_admin'')')}">
-    <div class="block">
-        <ul>
-            <li th:each="el : ${list}">
-                <div class="product">
-                    <table border="1" cellpadding="5">
-                        <tr>
-                            <td><span th:text="${el.url}"></span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <table border="1" cellpadding="5">
-                                    <tr th:each="s : ${el.services}">
-                                        <td><span th:text="${s.name}"></span></td>
-                                        <td><span th:text="${s.status}"></span></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </li>
-        </ul>
-    </div>
+<div class="block">
+    <ul>
+        <li th:each="el : ${list.statusEndpoints}">
+            <div class="product">
+                <table border="1" cellpadding="5">
+                    <tr>
+                        <td><span th:text="${el.url}"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span th:text="${list.time}"></span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table border="1" cellpadding="5">
+                                <tr th:each="s : ${el.services}">
+                                    <td><span th:text="${s.name}"></span></td>
+                                    <td><span th:text="${s.status}"></span></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </li>
+    </ul>
 </div>
-
-<div th:if="${#authorization.expression('hasRole(''ROLE_user'')')} and ${!#authorization.expression('hasRole(''ROLE_admin'')')}">
-    <div class="block">
-        <ul>
-            <li th:each="el : ${list}">
-                <div class="product" th:if="${el.role.equals('user')}">
-                    <table border="1" cellpadding="5">
-                        <tr>
-                            <td><span th:text="${el.url}"></span></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <table border="1" cellpadding="5">
-                                    <tr th:each="s : ${el.services}">
-                                        <td><span th:text="${s.name}"></span></td>
-                                        <td><span th:text="${s.status}"></span></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </li>
-        </ul>
-    </div>
 </div>
 
 </body>

@@ -1,6 +1,7 @@
 package com.praktika.checkservicehealth.controller;
 
 import com.praktika.checkservicehealth.dto.EndpointStatusDto;
+import com.praktika.checkservicehealth.dto.SavedDataDto;
 import com.praktika.checkservicehealth.service.EndpointService;
 import com.praktika.checkservicehealth.service.NotificationTg;
 import com.praktika.checkservicehealth.service.impl.EndpointServiceImpl;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +34,8 @@ public class EndpointController {
 
     @GetMapping("/check")
     public String checkAllEndpoints(Model model) {
-        List<EndpointStatusDto> statusEndpoints = endpointService.checkAllEndpoints();
+        SavedDataDto savedDataDto = endpointService.getSavedData();
+        List<EndpointStatusDto> statusEndpoints = savedDataDto.getStatusEndpoints();
 
         List<String> roles = new ArrayList<>();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -51,7 +54,7 @@ public class EndpointController {
 
         List<EndpointStatusDto> outputList = new ArrayList<>();
         String formattedRole = currentRole.split("_")[1];
-        if(!formattedRole.equals("admin")) {
+        if (!formattedRole.equals("admin")) {
             for (var endpoint : statusEndpoints) {
                 if (endpoint.getRole().equals(formattedRole)) {
                     outputList.add(endpoint);
@@ -61,8 +64,9 @@ public class EndpointController {
             outputList = statusEndpoints;
         }
 
-        model.addAttribute("list", outputList);
+        savedDataDto.setStatusEndpoints(outputList);
 
+        model.addAttribute("list", savedDataDto);
         return "check";
     }
 

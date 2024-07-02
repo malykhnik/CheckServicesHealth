@@ -1,9 +1,11 @@
 package com.praktika.checkservicehealth.service;
 
 import com.praktika.checkservicehealth.dto.EndpointStatusDto;
+import com.praktika.checkservicehealth.dto.SavedDataDto;
 
 import java.util.List;
 
 public interface EndpointService {
-    List<EndpointStatusDto> checkAllEndpoints();
+    void checkAllEndpoints();
+    SavedDataDto getSavedData();
 }

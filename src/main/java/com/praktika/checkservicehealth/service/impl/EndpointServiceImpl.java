@@ -10,10 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,9 @@ public class EndpointServiceImpl implements EndpointService {
     private final Logger LOGGER = LoggerFactory.getLogger(EndpointServiceImpl.class);
     private final EndpointRepo endpointRepo;
     private final NotificationTg notificationTg;
+    private SavedDataDto savedDataDto;
     private List<EndpointStatusDto> endpointStatusDtos;
+
 
     @Value("${url.get_token.key}")
     String GET_TOKEN;
@@ -33,7 +37,8 @@ public class EndpointServiceImpl implements EndpointService {
     private final RestClient restClient = RestClient.create();
 
     @Override
-    public List<EndpointStatusDto> checkAllEndpoints() {
+    @Scheduled(fixedRate = 5000)
+    public void checkAllEndpoints() {
         endpointStatusDtos = new ArrayList<>();
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
@@ -79,7 +84,7 @@ public class EndpointServiceImpl implements EndpointService {
             }
         });
 
-        return endpointStatusDtos;
+        savedDataDto = new SavedDataDto(endpointStatusDtos, Instant.now());
     }
 
     private AuthResponse checkServiceAvailability(String url, String token) {
@@ -88,5 +93,10 @@ public class EndpointServiceImpl implements EndpointService {
                 .header("token", token)
                 .retrieve()
                 .body(AuthResponse.class);
+    }
+
+    @Override
+    public SavedDataDto getSavedData() {
+        return savedDataDto;
     }
 }
