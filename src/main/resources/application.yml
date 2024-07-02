@@ -16,15 +16,18 @@ spring:
       hibernate:
         format_sql: true
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: s3v3nny
-    password: Thesmitt77!?@
+    host: smtp.mail.кг
+    port: 465
+    username: nik.malykh.2024@mail.ru
+    password: PLmpfSCAvDhCzrtzYSiw
     proprerties:
       mail:
         smtp:
           auth: true
-            
+          starttls:
+            enable: true
+
+    default-encoding: UTF-8
 url:
   tg:
     key: "http://localhost:9001"
@@ -34,3 +37,6 @@ url:
     key: "get-token"
   check_status:
     key: "check-status"
+
+email:
+  from: "nik.malykh.2024@mail.ru"
