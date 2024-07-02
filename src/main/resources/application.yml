@@ -20,11 +20,13 @@ spring:
     port: 587
     username: s3v3nny
     password: Thesmitt77!?@
-    proprerties:
+    properties:
       mail:
         smtp:
           auth: true
-            
+          starttls:
+            enable: true
+
 url:
   tg:
     key: "http://localhost:9001"
