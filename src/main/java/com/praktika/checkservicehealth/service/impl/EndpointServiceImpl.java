@@ -39,10 +39,8 @@ public class EndpointServiceImpl implements EndpointService {
     private final RestClient restClient = RestClient.create();
 
     @Override
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(fixedRate = 30000)
     public void checkAllEndpoints() {
-        mailService.sendMail("ЗАШЕЛ В ФУНКЦИЮ checkAllEndpoints");
-
         endpointStatusDtos = new ArrayList<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedTime = dtf.format(LocalDateTime.now());

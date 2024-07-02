@@ -81,32 +81,4 @@ public class AuthenticationController {
         }
     }
 
-//
-//    @PostMapping("/signUp")
-//    private ResponseEntity<Object> signUp(@RequestBody UserDto userDto) {
-//        if (userService.findByUsername(userDto.getUsername()) != null){
-//            return ResponseEntity.ok("Пользователь с таким username уже существует!");
-//        } else {
-//            userService.saveUser(userDto);
-//            return ResponseEntity.ok().body("Пользователь успешно зарегистрирован");
-//        }
-//    }
-//
-//    @PostMapping("/signIn")
-//    private ResponseEntity<String> signIn(@RequestBody UserDto userDto, HttpServletRequest request) {
-//        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(userDto.getUsername(),
-//                userDto.getPassword());
-//        try {
-//            Authentication auth = authenticationManager.authenticate(authReq);
-//            SecurityContext sc = SecurityContextHolder.getContext();
-//            sc.setAuthentication(auth);
-//            HttpSession session = request.getSession(true);
-//            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
-//
-//            return ResponseEntity.ok().body("Аутентификация прошла успешно");
-//        } catch (AuthenticationException e) {
-//            return ResponseEntity.ok().body("Аутентификация провалена");
-//        }
-//    }
-
 }

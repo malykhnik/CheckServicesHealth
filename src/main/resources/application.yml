@@ -2,9 +2,9 @@ spring:
   application:
     name: CheckServiceHealth
   datasource:
-    url: jdbc:postgresql://sloth-2.suslovd.ru:9132/health_microservice
-    password: pass
-    username: user
+    url: jdbc:postgresql://localhost:5432/services_health
+    password: postgres
+    username: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -16,14 +16,16 @@ spring:
       hibernate:
         format_sql: true
   mail:
-    host: smtp.mail.кг
+    host: smtp.mail.ru
     port: 465
     username: nik.malykh.2024@mail.ru
     password: PLmpfSCAvDhCzrtzYSiw
-    proprerties:
+    properties:
       mail:
         smtp:
           auth: true
+          ssl:
+            enable: true
           starttls:
             enable: true
 
