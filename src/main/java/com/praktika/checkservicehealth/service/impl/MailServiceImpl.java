@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 
@@ -20,20 +22,17 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
     private final Logger logger = LoggerFactory.getLogger(MailService.class);
 
+    @Async
     @Override
     public void sendMail(String text) {
         List<Email> emails = emailRepo.findAll();
-
-        Thread thread = new Thread(() -> {
-            for(Email e : emails) {
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setTo(e.getReceiver());
-                message.setSubject("Отключение сервиса");
-                message.setText(text);
-                mailSender.send(message);
-                logger.info("message sended to: {}", e.getReceiver());
-            }
-        });
-        thread.start();
+        for (Email e : emails) {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(e.getReceiver());
+            message.setSubject("Отключение сервиса");
+            message.setText(text);
+            mailSender.send(message);
+            logger.info("message sended to: {}", e.getReceiver());   
+        }
     }
 }
