@@ -21,7 +21,7 @@ public class MailServiceImpl implements MailService {
     public void sendMail(String text) {
         List<Email> emails = emailRepo.findAll();
 
-        new Runnable() {
+        Runnable runnable = new Runnable() {
             public void run() {
                 for(Email e : emails) {
                     SimpleMailMessage message = new SimpleMailMessage();
@@ -32,5 +32,7 @@ public class MailServiceImpl implements MailService {
                 }
             }
         };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 }
