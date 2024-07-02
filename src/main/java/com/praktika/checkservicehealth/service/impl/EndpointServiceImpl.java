@@ -97,6 +97,9 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Override
     public SavedDataDto getSavedData() {
+        if (savedDataDto == null) {
+           checkAllEndpoints();
+        }
         return savedDataDto;
     }
 }
