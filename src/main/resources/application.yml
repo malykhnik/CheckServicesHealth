@@ -1,14 +1,11 @@
 spring:
   application:
     name: CheckServiceHealth
-
   datasource:
-#    url: jdbc:postgresql://sloth-2.suslovd.ru:9132/health_microservice
-    url: jdbc:postgresql://localhost:5432/services_health
-    password: postgres
-    username: postgres
+    url: jdbc:postgresql://sloth-2.suslovd.ru:9132/health_microservice
+    password: pass
+    username: user
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,20 +15,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
   mail:
-    host: smtp.mail.ru
-    port: 465
-    username: nik.malykh.2024@mail.ru
-    password: 9buDV8wZ21mFxsGHMyHh
-    properties:
+    host: smtp.gmail.com
+    port: 587
+    username: s3v3nny
+    password: Thesmitt77!?@
+    proprerties:
       mail:
         smtp:
           auth: true
-          starttls:
-            enable: true
-    default-encoding: UTF-8
-
+            
 url:
   tg:
     key: "http://localhost:9001"
@@ -41,6 +34,3 @@ url:
     key: "get-token"
   check_status:
     key: "check-status"
-
-email:
-  from: "nik.malykh.2024@mail.ru"
