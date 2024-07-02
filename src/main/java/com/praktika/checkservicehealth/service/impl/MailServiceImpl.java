@@ -27,10 +27,15 @@ public class MailServiceImpl implements MailService {
     public void sendMail(String text) {
         List<Email> emails = emailRepo.findAll();
         for (Email e : emails) {
+            logger.info("sdfsdfasd1");
             SimpleMailMessage message = new SimpleMailMessage();
+            logger.info("sdfsdfasd2");
             message.setTo(e.getReceiver());
+            logger.info("sdfsdfasd3");
             message.setSubject("Отключение сервиса");
+            logger.info("sdfsdfasd4");
             message.setText(text);
+            logger.info("sdfsdfasd5");
             mailSender.send(message);
             logger.info("message sended to: {}", e.getReceiver());   
         }
