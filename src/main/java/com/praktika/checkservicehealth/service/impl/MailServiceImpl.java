@@ -26,12 +26,16 @@ public class MailServiceImpl implements MailService {
 
         Thread thread = new Thread(() -> {
             for(Email e : emails) {
-                logger.info("message sended to: {}", e.getReceiver());
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(e.getReceiver());
                 message.setSubject("Отключение сервиса");
                 message.setText(text);
-                mailSender.send(message);
+                try {
+                    mailSender.send(message);
+                } catch (MailException ex) {
+                    ex.printStackTrace();
+                }
+                logger.info("message sended to: {}", e.getReceiver());
                 
             }
         });
