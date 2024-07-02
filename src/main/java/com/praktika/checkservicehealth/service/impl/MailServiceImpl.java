@@ -21,6 +21,7 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
     private final Logger logger = LoggerFactory.getLogger(MailService.class);
 
+    @Async
     @Override
     public void sendMail(String text) {
         List<Email> emails = emailRepo.findAll();
