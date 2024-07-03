@@ -7,52 +7,61 @@
 </head>
 <body>
 
+<!--<div class="block">-->
+<!--    <ul>-->
+<!--        <li th:each="el : ${list.statusEndpoints}">-->
+<!--            <div class="product">-->
+<!--                <table>-->
+<!--                    <tr>-->
+<!--                        <td><span th:text="${el.url}"></span></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td><span th:text="${list.time}"></span></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td>-->
+<!--                            <table border="1" cellpadding="5">-->
+<!--                                <tr th:each="s : ${el.services}">-->
+<!--                                    <td><span th:text="${s.name}"></span></td>-->
+<!--                                    <td class="green" th:if='${s.status == "active"}'><span-->
+<!--                                            th:text="${s.status}"></span></td>-->
+<!--                                    <td class="red" th:if='${s.status == "inactive"}'><span-->
+<!--                                            th:text="${s.status}"></span></td>-->
+<!--                                    <td class="black" th:if='${s.status == "no connection"}'><span-->
+<!--                                            th:text="${s.status}"></span></td>-->
+<!--                                </tr>-->
+<!--                            </table>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </li>-->
+<!--    </ul>-->
+<!--</div>-->
+
 <div class="block">
-    <ul>
-        <li th:each="el : ${list.statusEndpoints}">
-            <div class="product">
-                <table>
-                    <tr>
-                        <td><span th:text="${el.url}"></span></td>
-                    </tr>
-                    <tr>
-                        <td><span th:text="${list.time}"></span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <table border="1" cellpadding="5">
-                                <tr th:each="s : ${el.services}">
-                                    <td><span th:text="${s.name}"></span></td>
-                                    <td class="green" th:if='${s.status == "active"}'><span th:text="${s.status}"></span></td>
-                                    <td class="red" th:if='${s.status == "inactive"}'><span th:text="${s.status}"></span></td>
-                                    <td class="black" th:if='${s.status == "no connection"}'><span th:text="${s.status}"></span></td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
+    <h2>Список эндпоинтов</h2>
+
+    <div class="row">
+        <div th:each="el : ${list.statusEndpoints}">
+            <div class="card">
+                <div class="url"><span th:text="${el.url}"></span></div>
+                <div class="time"><span th:text="${list.time}"></span></div>
+                <div th:each="s : ${el.services}">
+                    <div>
+                        <div  class="endpoint_info"><span th:text="${s.name}"></span></div>
+                        <div class="green" th:if='${s.status == "active"}'><span
+                                th:text="${s.status}"></span></div>
+                        <div class="red" th:if='${s.status == "inactive"}'><span
+                                th:text="${s.status}"></span></div>
+                        <div class="black" th:if='${s.status == "no connection"}'><span
+                                th:text="${s.status}"></span></div>
+                    </div>
+                </div>
             </div>
-        </li>
-    </ul>
+    </div>
 </div>
 
-<!--<div class="block">-->
-<!--    <div th:each="el : ${list.statusEndpoints}">-->
-<!--        <div class="product">-->
-
-<!--            <div><span th:text="${el.url}"></span></div>-->
-
-<!--            <div><span th:text="${list.time}"></span></div>-->
-
-<!--            <div th:each="s : ${el.services}">-->
-<!--                <div><span th:text="${s.name}"></span></div>-->
-<!--                <div class="green" th:if='${s.status == "active"}'><span th:text="${s.status}"></span></div>-->
-<!--                <div class="red" th:if='${s.status == "inactive"}'><span th:text="${s.status}"></span></div>-->
-<!--                <div class="black" th:if='${s.status == "no connection"}'><span th:text="${s.status}"></span></div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--</div>-->
+</div>
 </body>
 </html>

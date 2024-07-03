@@ -1,12 +1,51 @@
 .green {
     background-color: green;
     color: green;
+    display: inline-block;
 }
 .red {
     background-color: red;
     color: red;
+    display: inline-block;
 }
 .black {
     background-color: black;
     color: black;
+    display: inline-block;
+}
+
+.block {
+    position: relative;
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: #F5F5F5;
+    margin: 15px;
+    width: 90%;
+    height: 100%;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    position: relative;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    width: 350px;
+    height: 150px;
+    padding: 10px;
+    margin: 20px;
+    background-color: #F2E8C9;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+h2 {
+    margin-left: 50px;
+}
+
+.endpoint_info {
+    display: inline-block;
 }
