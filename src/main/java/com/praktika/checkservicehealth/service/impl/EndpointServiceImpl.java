@@ -78,10 +78,7 @@ public class EndpointServiceImpl implements EndpointService {
                     AuthResponse authResponse = checkServiceAvailability(endpoint.getUrl(), token);
 
                     LOGGER.info("authResponse: {}", authResponse);
-                    EndpointStatusDto endpointStatusDto = new EndpointStatusDto();
-                    endpointStatusDto.setRole(endpoint.getRole().getName());
-                    endpointStatusDto.setUrl(endpoint.getUrl());
-                    endpointStatusDto.setServices(new ArrayList<>());
+                    EndpointStatusDto endpointStatusDto = new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), new ArrayList<>());
 
                     for (ServiceDto service : authResponse.getServices()) {
                         LOGGER.info(service.toString());
@@ -99,7 +96,7 @@ public class EndpointServiceImpl implements EndpointService {
                     notificationTg.sendNotification(message);
                     mailService.sendMail(message);
                     List<ServiceDto> list = new ArrayList<>();
-                    list.add(new ServiceDto("endpoint", "no connection"));
+                    list.add(new ServiceDto("endpoint", "no connection", new CrudStatusDto(false,false, false, false)));
                     endpointStatusDtos.add(new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
                     LOGGER.info("Error: " + e.getMessage());
                 }

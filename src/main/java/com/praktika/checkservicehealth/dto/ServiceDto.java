@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class ServiceDto {
     private String name;
     private String status;
+    private CrudStatusDto crud_status;
 }
