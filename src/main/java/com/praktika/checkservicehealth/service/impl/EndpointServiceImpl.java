@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class EndpointServiceImpl implements EndpointService {
     private final RestClient restClient = RestClient.create();
 
     @Override
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 300000)
     public void checkAllEndpoints() {
         endpointStatusDtos = new ArrayList<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
