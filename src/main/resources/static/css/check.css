@@ -2,16 +2,27 @@
     background-color: green;
     color: green;
     display: inline-block;
+    border-radius: 50px;
+    width: 15px;
+    height: 15px;
 }
+
 .red {
     background-color: red;
     color: red;
     display: inline-block;
+    border-radius: 50px;
+    width: 15px;
+    height: 15px;
 }
+
 .black {
     background-color: black;
     color: black;
     display: inline-block;
+    border-radius: 50px;
+    width: 15px;
+    height: 15px;
 }
 
 .block {
@@ -20,7 +31,7 @@
     border-radius: 10px;
     background-color: #F5F5F5;
     margin: 15px;
-    width: 100%;
+    width: 95%;
     height: 100%;
 }
 
@@ -47,5 +58,38 @@ h2 {
 }
 
 .endpoint_info {
+    margin-left: 15px;
     display: inline-block;
+}
+
+.status {
+    font-weight: bold;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.list_services {
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.head_time {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.time {
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
+.url {
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.info {
+    display: flex;
+    align-items: center;
 }
