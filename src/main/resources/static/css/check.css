@@ -45,7 +45,7 @@
     border-radius: 30px;
     border: 1px solid #ccc;
     width: 350px;
-    height: 150px;
+    height: 300px;
     padding: 10px;
     margin: 20px;
     background-color: #F2E8C9;
@@ -91,7 +91,6 @@ h2 {
 
 .info {
     display: flex;
-    align-items: center;
 }
 
 .user_may {
