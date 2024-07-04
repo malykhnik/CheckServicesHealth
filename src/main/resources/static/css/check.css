@@ -100,10 +100,10 @@ h2 {
 
 .crud_status_left {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .crud_status_right {
-    margin-left: 15px;
-    margin-top: 15px;
+    margin-left: 13px;
+    margin-top: 13px;
 }
