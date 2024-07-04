@@ -1,6 +1,7 @@
 package com.praktika.checkservicehealth.controller;
 
 import com.praktika.checkservicehealth.dto.EndpointStatusDto;
+import com.praktika.checkservicehealth.dto.OutputDataDto;
 import com.praktika.checkservicehealth.dto.SavedDataDto;
 import com.praktika.checkservicehealth.service.EndpointService;
 import com.praktika.checkservicehealth.service.NotificationTg;
@@ -34,31 +35,23 @@ public class EndpointController {
 
     @GetMapping("/check")
     public String checkAllEndpoints(Model model) {
-        SavedDataDto savedDataDto = endpointService.getSavedData();
-        List<EndpointStatusDto> statusEndpoints = savedDataDto.getStatusEndpoints();
+        List<OutputDataDto> list = endpointService.getSavedData();
 
         String currentRole = WorkWithAuth.getCurrentRole();
-        for (EndpointStatusDto se : statusEndpoints) {
-            if (currentRole.contains(se.getRole())) {
-                LOGGER.info(se.toString());
-            }
-        }
-
-        List<EndpointStatusDto> outputList = new ArrayList<>();
+        System.out.println(list);
+        List<OutputDataDto> outputList = new ArrayList<>();
         String formattedRole = currentRole.split("_")[1];
         if (!formattedRole.equals("admin")) {
-            for (EndpointStatusDto endpoint : statusEndpoints) {
-                if (endpoint.getRole().equals(formattedRole)) {
-                    outputList.add(endpoint);
+            for (OutputDataDto output : list) {
+                if (output.getRole().equals(formattedRole)) {
+                    outputList.add(output);
                 }
             }
         } else {
-            outputList = statusEndpoints;
+            outputList = list;
         }
-
-        savedDataDto.setStatusEndpoints(outputList);
-
-        model.addAttribute("list", savedDataDto);
+        System.out.println(outputList);
+        model.addAttribute("list", outputList);
         return "check";
     }
 

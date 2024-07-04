@@ -9,16 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
 public class SavedDataDto {
     private List<EndpointStatusDto> statusEndpoints;
     private String time;
 
-    public SavedDataDto(Map<String, TimeDto> timeObj, String time) {
-        List<EndpointStatusDto> list = new ArrayList<>();
-        for (Map.Entry<String, TimeDto> entry : EndpointWithTimeDto.getInstance().getTimeObj().entrySet()) {
-            list.add(entry.getValue().getEndpoint());
-        }
-        this.statusEndpoints = list;
-        this.time = time;
-    }
 }

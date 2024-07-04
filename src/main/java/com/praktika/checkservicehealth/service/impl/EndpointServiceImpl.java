@@ -20,6 +20,7 @@ import org.springframework.web.client.RestClientException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,6 @@ public class EndpointServiceImpl implements EndpointService {
     private final Logger LOGGER = LoggerFactory.getLogger(EndpointServiceImpl.class);
     private final EndpointRepo endpointRepo;
     private final NotificationTg notificationTg;
-    private SavedDataDto savedDataDto;
     private final MailServiceImpl mailService;
     private final EndpointWithTimeDto endpointWithTimeDto = EndpointWithTimeDto.getInstance();
     private final RestClient restClient = RestClient.create();
@@ -50,14 +50,14 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     @Scheduled(fixedRate = 60000)
     public void checkAllEndpoints() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedTime = dtf.format(LocalDateTime.now());
 
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
         LOGGER.info(endpoints.toString());
 
         endpoints.forEach(endpoint -> {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedTime = dtf.format(LocalDateTime.now());
             LOGGER.info("зашел в цикл");
             if (checkEndpointTimer(endpoint.getUsername())) {
                 LOGGER.info("зашел в if");
@@ -109,8 +109,6 @@ public class EndpointServiceImpl implements EndpointService {
                 LOGGER.info("НЕ ЗАШЕЛ В if");
             }
         });
-
-        savedDataDto = new SavedDataDto(EndpointWithTimeDto.getInstance().getTimeObj(), formattedTime);
     }
 
     private AuthResponse checkServiceAvailability(String url, String token) {
@@ -131,10 +129,20 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public SavedDataDto getSavedData() {
-        if (savedDataDto == null) {
-            checkAllEndpoints();
+    public List<OutputDataDto> getSavedData() {
+        List<OutputDataDto> list = new ArrayList<>();
+        for (Map.Entry<String, TimeDto> entry : EndpointWithTimeDto.getInstance().getTimeObj().entrySet()) {
+            OutputDataDto temp = new OutputDataDto();
+            System.out.println(entry.getValue());
+            temp.setServices(entry.getValue().getEndpoint().getServices());
+            temp.setUrl(entry.getValue().getEndpoint().getUrl());
+            temp.setRole(entry.getValue().getEndpoint().getRole());
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
+                    .withZone(ZoneId.systemDefault());
+            String formattedTime = dtf.format(entry.getValue().getLastVisit());
+            temp.setTime(formattedTime);
+            list.add(temp);
         }
-        return savedDataDto;
+        return list;
     }
 }
