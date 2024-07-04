@@ -47,14 +47,20 @@
             <div class="card">
                 <div class="url"><span th:text="${el.url}"></span></div>
                 <div class="time"><span class="head_time">Time: </span><span th:text="${list.time}"></span></div>
-                <div class="list_services" th:each="s : ${el.services}">
+                <div class="list_services" th:each="service : ${el.services}">
                     <div class="info">
-                        <div class="green" th:if='${s.status == "active"}'></div>
-                        <div class="red" th:if='${s.status == "inactive"}'></div>
-                        <div class="black" th:if='${s.status == "no connection"}'></div>
+                        <div class="green" th:if='${service.status == "active"}'></div>
+                        <div class="red" th:if='${service.status == "inactive"}'></div>
+                        <div class="black" th:if='${service.status == "no connection"}'></div>
 
-                        <div class="endpoint_info"><span th:text="${s.name}"></span></div>
-                        <div class="status"><span th:text="${s.status}"></span></div>
+                        <div class="endpoint_info"><span th:text="${service.name}"></span></div>
+                        <div class="status"><span th:text="${service.status}"></span></div>
+
+                        <div class="user_may" th:each="status: ${service.crud_status}">
+                            <div class="crud_status" th:if="${status} == true">
+                                <span class="crud_status_head" th:text="${status}"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

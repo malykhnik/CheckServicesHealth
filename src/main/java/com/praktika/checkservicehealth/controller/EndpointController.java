@@ -5,6 +5,7 @@ import com.praktika.checkservicehealth.dto.SavedDataDto;
 import com.praktika.checkservicehealth.service.EndpointService;
 import com.praktika.checkservicehealth.service.NotificationTg;
 import com.praktika.checkservicehealth.service.impl.EndpointServiceImpl;
+import com.praktika.checkservicehealth.utils.WorkWithAuth;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +37,7 @@ public class EndpointController {
         SavedDataDto savedDataDto = endpointService.getSavedData();
         List<EndpointStatusDto> statusEndpoints = savedDataDto.getStatusEndpoints();
 
-        List<String> roles = new ArrayList<>();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated()) {
-            for (GrantedAuthority authority : auth.getAuthorities()) {
-                roles.add(authority.getAuthority());
-            }
-        }
-        String currentRole = roles.get(0);
+        String currentRole = WorkWithAuth.getCurrentRole();
         for (var se : statusEndpoints) {
             if (currentRole.contains(se.getRole())) {
                 LOGGER.info(se.toString());
@@ -67,7 +61,6 @@ public class EndpointController {
         model.addAttribute("list", savedDataDto);
         return "check";
     }
-
 
 
 }

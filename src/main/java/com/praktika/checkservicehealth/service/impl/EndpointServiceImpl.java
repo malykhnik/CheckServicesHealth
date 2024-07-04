@@ -5,6 +5,7 @@ import com.praktika.checkservicehealth.entity.Endpoint;
 import com.praktika.checkservicehealth.repository.EndpointRepo;
 import com.praktika.checkservicehealth.service.EndpointService;
 import com.praktika.checkservicehealth.service.NotificationTg;
+import com.praktika.checkservicehealth.utils.WorkWithAuth;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -81,7 +82,12 @@ public class EndpointServiceImpl implements EndpointService {
                     EndpointStatusDto endpointStatusDto = new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), new ArrayList<>());
 
                     for (ServiceDto service : authResponse.getServices()) {
-                        LOGGER.info(service.toString());
+                        String currentRole = WorkWithAuth.getCurrentRole();
+                        String formattedRole = currentRole.split("_")[1];
+                        if (formattedRole.equals("user")) {
+                            service.getCrud_status().setCreate(false);
+                            service.getCrud_status().setDelete(false);
+                        }
                         if ("inactive".equals(service.getStatus())) {
                             String message = String.format("Сервис %s не работает на эндпоинте %s. %s", service.getName(), endpoint.getUrl(), formattedTime);
                             notificationTg.sendNotification(message);
