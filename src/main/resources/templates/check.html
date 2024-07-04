@@ -26,24 +26,16 @@
 
                         <div class="user_may" th:if="${service.crud_status} != null">
                             <div class="crud_status" th:if="${service.crud_status.create} == true">
-                                <span class="crud_status_left">CREATE:
-                                    <span class="crud_status_right"> Доступна</span>
-                                </span>
+                                <span class="crud_status_left">UPDATE: доступна </span>
                             </div>
                             <div class="crud_status" th:if="${service.crud_status.read} == true">
-                                <span class="crud_status_left">READ:
-                                    <span class="crud_status_right"> Доступна</span>
-                                </span>
+                                <span class="crud_status_left">UPDATE: доступна </span>
                             </div>
                             <div class="crud_status" th:if="${service.crud_status.update} == true">
-                                <span class="crud_status_left">UPDATE:
-                                    <span class="crud_status_right"> Доступна</span>
-                                </span>
+                                <span class="crud_status_left">UPDATE: доступна </span>
                             </div>
                             <div class="crud_status" th:if="${service.crud_status.delete} == true">
-                                <span class="crud_status_left">DELETE:
-                                    <span class="crud_status_right"> Доступна</span>
-                                </span>
+                                <span class="crud_status_left">UPDATE: доступна </span>
                             </div>
                         </div>
                     </div>

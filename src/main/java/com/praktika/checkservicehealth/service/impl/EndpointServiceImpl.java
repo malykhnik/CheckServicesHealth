@@ -139,13 +139,14 @@ public class EndpointServiceImpl implements EndpointService {
 
             String currentRole = WorkWithAuth.getCurrentRole();
             String formattedRole = currentRole.split("_")[1];
-            for(ServiceDto service : entry.getValue().getEndpoint().getServices()) {
-                if (formattedRole.equals("user") && service.getCrud_status() != null) {
-                    service.getCrud_status().setCreate(false);
-                    service.getCrud_status().setDelete(false);
+            if (entry.getValue().getEndpoint().getServices() != null) {
+                for(ServiceDto service : entry.getValue().getEndpoint().getServices()) {
+                    if (formattedRole.equals("user") && service.getCrud_status() != null) {
+                        service.getCrud_status().setCreate(false);
+                        service.getCrud_status().setDelete(false);
+                    }
                 }
             }
-
         }
         return list;
     }
