@@ -96,6 +96,7 @@ h2 {
 .user_may {
     margin-left: 15px;
     margin-top: 15px;
+    display: block;
 }
 
 .crud_status_left {
