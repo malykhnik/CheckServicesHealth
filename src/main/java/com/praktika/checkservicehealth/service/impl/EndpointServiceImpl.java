@@ -32,7 +32,6 @@ public class EndpointServiceImpl implements EndpointService {
     private final EndpointRepo endpointRepo;
     private final NotificationTg notificationTg;
     private SavedDataDto savedDataDto;
-    private List<EndpointStatusDto> endpointStatusDtos;
     private final MailServiceImpl mailService;
     private final EndpointWithTimeDto endpointWithTimeDto = EndpointWithTimeDto.getInstance();
     private final RestClient restClient = RestClient.create();
@@ -51,13 +50,13 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     @Scheduled(fixedRate = 60000)
     public void checkAllEndpoints() {
-        endpointStatusDtos = new ArrayList<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedTime = dtf.format(LocalDateTime.now());
 
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
         LOGGER.info(endpoints.toString());
+
         endpoints.forEach(endpoint -> {
             LOGGER.info("зашел в цикл");
             if (checkEndpointTimer(endpoint.getUsername())) {
@@ -82,12 +81,12 @@ public class EndpointServiceImpl implements EndpointService {
                     EndpointStatusDto endpointStatusDto = new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), new ArrayList<>());
 
                     for (ServiceDto service : authResponse.getServices()) {
-//                        String currentRole = WorkWithAuth.getCurrentRole();
-//                        String formattedRole = currentRole.split("_")[1];
-//                        if (formattedRole.equals("user")) {
-//                            service.getCrud_status().setCreate(false);
-//                            service.getCrud_status().setDelete(false);
-//                        }
+                        String currentRole = WorkWithAuth.getCurrentRole();
+                        String formattedRole = currentRole.split("_")[1];
+                        if (formattedRole.equals("user")) {
+                            service.getCrud_status().setCreate(false);
+                            service.getCrud_status().setDelete(false);
+                        }
                         if ("inactive".equals(service.getStatus())) {
                             String message = String.format("Сервис %s не работает на эндпоинте %s. %s", service.getName(), endpoint.getUrl(), formattedTime);
                             notificationTg.sendNotification(message);
@@ -95,15 +94,15 @@ public class EndpointServiceImpl implements EndpointService {
                         }
                         endpointStatusDto.getServices().add(service);
                     }
-                    endpointStatusDtos.add(endpointStatusDto);
+                    EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), endpointStatusDto);
 
                 } catch (RestClientException e) {
                     String message = String.format("Сервис на эндпоинте %s не отвечает. %s", endpoint.getUrl(), formattedTime);
                     notificationTg.sendNotification(message);
                     mailService.sendMail(message);
                     List<ServiceDto> list = new ArrayList<>();
-                    list.add(new ServiceDto("endpoint", "no connection", new CrudStatusDto(false,false, false, false)));
-                    endpointStatusDtos.add(new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
+                    list.add(new ServiceDto("endpoint", "no connection", new CrudStatusDto(false, false, false, false)));
+                    EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
                     LOGGER.info("Error: " + e.getMessage());
                 }
             } else {
@@ -111,7 +110,7 @@ public class EndpointServiceImpl implements EndpointService {
             }
         });
 
-        savedDataDto = new SavedDataDto(endpointStatusDtos, formattedTime);
+        savedDataDto = new SavedDataDto(EndpointWithTimeDto.getInstance().getTimeObj(), formattedTime);
     }
 
     private AuthResponse checkServiceAvailability(String url, String token) {

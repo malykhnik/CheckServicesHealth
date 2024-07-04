@@ -11,6 +11,7 @@ import java.time.Instant;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class TimeDto {
+    private EndpointStatusDto endpoint;
     private Instant lastVisit;
     private Duration timePeriod;
 }

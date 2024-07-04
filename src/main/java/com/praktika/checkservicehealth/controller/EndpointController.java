@@ -38,7 +38,7 @@ public class EndpointController {
         List<EndpointStatusDto> statusEndpoints = savedDataDto.getStatusEndpoints();
 
         String currentRole = WorkWithAuth.getCurrentRole();
-        for (var se : statusEndpoints) {
+        for (EndpointStatusDto se : statusEndpoints) {
             if (currentRole.contains(se.getRole())) {
                 LOGGER.info(se.toString());
             }
