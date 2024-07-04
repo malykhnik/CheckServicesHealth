@@ -23,20 +23,19 @@
 
                         <div class="endpoint_info"><span th:text="${service.name}"></span></div>
                         <div class="status"><span th:text="${service.status}"></span></div>
-
-                        <div class="user_may" th:if="${service.crud_status} != null">
-                            <div class="crud_status" th:if="${service.crud_status.create} == true">
-                                <span class="crud_status_left">UPDATE: доступна </span>
-                            </div>
-                            <div class="crud_status" th:if="${service.crud_status.read} == true">
-                                <span class="crud_status_left">UPDATE: доступна </span>
-                            </div>
-                            <div class="crud_status" th:if="${service.crud_status.update} == true">
-                                <span class="crud_status_left">UPDATE: доступна </span>
-                            </div>
-                            <div class="crud_status" th:if="${service.crud_status.delete} == true">
-                                <span class="crud_status_left">UPDATE: доступна </span>
-                            </div>
+                    </div>
+                    <div class="user_may" th:if="${service.crud_status} != null">
+                        <div class="crud_status" th:if="${service.crud_status.create} == true">
+                            <span class="crud_status_left">CREATE: доступна </span>
+                        </div>
+                        <div class="crud_status" th:if="${service.crud_status.read} == true">
+                            <span class="crud_status_left">READ: доступна </span>
+                        </div>
+                        <div class="crud_status" th:if="${service.crud_status.update} == true">
+                            <span class="crud_status_left">UPDATE: доступна </span>
+                        </div>
+                        <div class="crud_status" th:if="${service.crud_status.delete} == true">
+                            <span class="crud_status_left">DELETE: доступна </span>
                         </div>
                     </div>
                 </div>
