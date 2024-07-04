@@ -81,12 +81,12 @@ public class EndpointServiceImpl implements EndpointService {
                     EndpointStatusDto endpointStatusDto = new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), new ArrayList<>());
 
                     for (ServiceDto service : authResponse.getServices()) {
-                        String currentRole = WorkWithAuth.getCurrentRole();
-                        String formattedRole = currentRole.split("_")[1];
-                        if (formattedRole.equals("user")) {
-                            service.getCrud_status().setCreate(false);
-                            service.getCrud_status().setDelete(false);
-                        }
+//                        String currentRole = WorkWithAuth.getCurrentRole();
+//                        String formattedRole = currentRole.split("_")[1];
+//                        if (formattedRole.equals("user")) {
+//                            service.getCrud_status().setCreate(false);
+//                            service.getCrud_status().setDelete(false);
+//                        }
                         if ("inactive".equals(service.getStatus())) {
                             String message = String.format("Сервис %s не работает на эндпоинте %s. %s", service.getName(), endpoint.getUrl(), formattedTime);
                             notificationTg.sendNotification(message);
