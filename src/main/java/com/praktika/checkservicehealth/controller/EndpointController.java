@@ -47,7 +47,7 @@ public class EndpointController {
         List<EndpointStatusDto> outputList = new ArrayList<>();
         String formattedRole = currentRole.split("_")[1];
         if (!formattedRole.equals("admin")) {
-            for (var endpoint : statusEndpoints) {
+            for (EndpointStatusDto endpoint : statusEndpoints) {
                 if (endpoint.getRole().equals(formattedRole)) {
                     outputList.add(endpoint);
                 }
