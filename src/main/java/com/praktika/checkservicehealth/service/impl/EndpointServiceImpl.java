@@ -53,7 +53,54 @@ public class EndpointServiceImpl implements EndpointService {
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
         LOGGER.info(endpoints.toString());
-        endpoints.forEach(this::workWithHttpRequestsAndSendData);
+        endpoints.forEach(endpoint -> {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedTime = dtf.format(LocalDateTime.now());
+            LOGGER.info("зашел в цикл");
+            if (checkEndpointTimer(endpoint.getUsername())) {
+                LOGGER.info("зашел в if");
+                LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
+
+                LOGGER.info(endpoint.getUrl());
+
+                try {
+                    TokenDto tokenDto = restClient.post()
+                            .uri(endpoint.getUrl() + GET_TOKEN)
+                            .header("Content-Type", "application/json")
+                            .body(loginEndpointDto)
+                            .retrieve()
+                            .body(TokenDto.class);
+
+                    assert tokenDto != null;
+                    String token = tokenDto.getToken();
+                    AuthResponse authResponse = checkServiceAvailability(endpoint.getUrl(), token);
+
+                    LOGGER.info("authResponse: {}", authResponse);
+                    EndpointStatusDto endpointStatusDto = new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), new ArrayList<>());
+
+                    for (ServiceDto service : authResponse.getServices()) {
+                        if ("inactive".equals(service.getStatus())) {
+                            String message = String.format("Сервис %s не работает на эндпоинте %s. %s", service.getName(), endpoint.getUrl(), formattedTime);
+                            notificationTg.sendNotification(message);
+                            mailService.sendMail(message);
+                        }
+                        endpointStatusDto.getServices().add(service);
+                    }
+                    EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), endpointStatusDto);
+
+                } catch (RestClientException e) {
+                    String message = String.format("Сервис на эндпоинте %s не отвечает. %s", endpoint.getUrl(), formattedTime);
+                    notificationTg.sendNotification(message);
+                    mailService.sendMail(message);
+                    List<ServiceDto> list = new ArrayList<>();
+                    list.add(new ServiceDto("endpoint", "no connection", new CrudStatusDto(false, false, false, false)));
+                    EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
+                    LOGGER.info("Error: " + e.getMessage());
+                }
+            } else {
+                LOGGER.info("НЕ ЗАШЕЛ В if");
+            }
+        });
     }
 
     @Override
@@ -61,7 +108,50 @@ public class EndpointServiceImpl implements EndpointService {
         Optional<Endpoint> endpointOptional = endpointRepo.findEndpointByUrl(url);
         if (endpointOptional.isPresent()) {
             Endpoint endpoint = endpointOptional.get();
-            workWithHttpRequestsAndSendData(endpoint);
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedTime = dtf.format(LocalDateTime.now());
+            LOGGER.info("зашел в цикл");
+
+            LOGGER.info("зашел в if");
+            LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
+
+            LOGGER.info(endpoint.getUrl());
+
+            try {
+                TokenDto tokenDto = restClient.post()
+                        .uri(endpoint.getUrl() + GET_TOKEN)
+                        .header("Content-Type", "application/json")
+                        .body(loginEndpointDto)
+                        .retrieve()
+                        .body(TokenDto.class);
+
+                assert tokenDto != null;
+                String token = tokenDto.getToken();
+                AuthResponse authResponse = checkServiceAvailability(endpoint.getUrl(), token);
+
+                LOGGER.info("authResponse: {}", authResponse);
+                EndpointStatusDto endpointStatusDto = new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), new ArrayList<>());
+
+                for (ServiceDto service : authResponse.getServices()) {
+                    if ("inactive".equals(service.getStatus())) {
+                        String message = String.format("Сервис %s не работает на эндпоинте %s. %s", service.getName(), endpoint.getUrl(), formattedTime);
+                        notificationTg.sendNotification(message);
+                        mailService.sendMail(message);
+                    }
+                    endpointStatusDto.getServices().add(service);
+                }
+                EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), endpointStatusDto);
+
+            } catch (RestClientException e) {
+                String message = String.format("Сервис на эндпоинте %s не отвечает. %s", endpoint.getUrl(), formattedTime);
+                notificationTg.sendNotification(message);
+                mailService.sendMail(message);
+                List<ServiceDto> list = new ArrayList<>();
+                list.add(new ServiceDto("endpoint", "no connection", new CrudStatusDto(false, false, false, false)));
+                EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
+                LOGGER.info("Error: " + e.getMessage());
+            }
+
         } else {
             LOGGER.info("ЭНДПОИНТ ПУСТОЙ");
         }
@@ -113,52 +203,4 @@ public class EndpointServiceImpl implements EndpointService {
         return list;
     }
 
-    private void workWithHttpRequestsAndSendData(Endpoint endpoint) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedTime = dtf.format(LocalDateTime.now());
-        LOGGER.info("зашел в цикл");
-        if (checkEndpointTimer(endpoint.getUsername())) {
-            LOGGER.info("зашел в if");
-            LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
-
-            LOGGER.info(endpoint.getUrl());
-
-            try {
-                TokenDto tokenDto = restClient.post()
-                        .uri(endpoint.getUrl() + GET_TOKEN)
-                        .header("Content-Type", "application/json")
-                        .body(loginEndpointDto)
-                        .retrieve()
-                        .body(TokenDto.class);
-
-                assert tokenDto != null;
-                String token = tokenDto.getToken();
-                AuthResponse authResponse = checkServiceAvailability(endpoint.getUrl(), token);
-
-                LOGGER.info("authResponse: {}", authResponse);
-                EndpointStatusDto endpointStatusDto = new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), new ArrayList<>());
-
-                for (ServiceDto service : authResponse.getServices()) {
-                    if ("inactive".equals(service.getStatus())) {
-                        String message = String.format("Сервис %s не работает на эндпоинте %s. %s", service.getName(), endpoint.getUrl(), formattedTime);
-                        notificationTg.sendNotification(message);
-                        mailService.sendMail(message);
-                    }
-                    endpointStatusDto.getServices().add(service);
-                }
-                EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), endpointStatusDto);
-
-            } catch (RestClientException e) {
-                String message = String.format("Сервис на эндпоинте %s не отвечает. %s", endpoint.getUrl(), formattedTime);
-                notificationTg.sendNotification(message);
-                mailService.sendMail(message);
-                List<ServiceDto> list = new ArrayList<>();
-                list.add(new ServiceDto("endpoint", "no connection", new CrudStatusDto(false, false, false, false)));
-                EndpointWithTimeDto.getInstance().updateMap(endpoint.getUsername(), new EndpointStatusDto(endpoint.getRole().getName(), endpoint.getUrl(), list));
-                LOGGER.info("Error: " + e.getMessage());
-            }
-        } else {
-            LOGGER.info("НЕ ЗАШЕЛ В if");
-        }
-    }
 }
