@@ -13,7 +13,7 @@
     <div class="row">
         <div th:each="el : ${list}">
 
-            <a th:href="@{/api/endpoints/checkByUrl?url=${el.url}}">
+            <a th:href="@{/api/endpoints/checkByUrl(url=${el.url})}">
                 <div class="card">
                     <div class="url"><span th:text="${el.url}"></span></div>
                     <div class="time"><span class="head_time">Time: </span><span th:text="${el.time}"></span></div>
