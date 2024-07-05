@@ -13,11 +13,11 @@
     <div class="row">
         <div th:each="el : ${list}">
 
-            <a th:href="@{/api/endpoints/checkByUrl(url=${el.url})}">
+            <a th:href="@{/api/endpoints/checkByUrl?url=${el.url}}">
                 <div class="card">
                     <div class="url"><span th:text="${el.url}"></span></div>
                     <div class="time"><span class="head_time">Time: </span><span th:text="${el.time}"></span></div>
-                    <div class="list_services" th:each="service : ${el.services}">
+                    <div class="list_services" th:each="service : ${el.services}">x
                         <div class="info">
                             <div class="green" th:if='${service.status == "active"}'></div>
                             <div class="red" th:if='${service.status == "inactive"}'></div>
