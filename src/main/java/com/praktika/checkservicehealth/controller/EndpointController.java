@@ -51,8 +51,8 @@ public class EndpointController {
         return "check";
     }
 
-    @GetMapping("/checkByUrl/{url}")
-    public String checkEndpointByUrl(@PathVariable String url) {
+    @GetMapping("/checkByUrl")
+    public String checkEndpointByUrl(@RequestParam String url) {
         endpointService.checkEndpointByUrl(url);
         return "redirect:/api/endpoints/check";
     }
