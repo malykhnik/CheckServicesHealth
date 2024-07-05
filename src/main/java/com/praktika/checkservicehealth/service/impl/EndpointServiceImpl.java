@@ -57,8 +57,8 @@ public class EndpointServiceImpl implements EndpointService {
     }
 
     @Override
-    public void checkEndpointByUsername(String username) {
-        Optional<Endpoint> endpointOptional = endpointRepo.findEndpointByUsername(username);
+    public void checkEndpointByUrl(String url) {
+        Optional<Endpoint> endpointOptional = endpointRepo.findEndpointByUrl(url);
         if (endpointOptional.isPresent()) {
             Endpoint endpoint = endpointOptional.get();
             workWithHttpRequestsAndSendData(endpoint);
@@ -90,7 +90,6 @@ public class EndpointServiceImpl implements EndpointService {
         for (Map.Entry<String, TimeDto> entry : EndpointWithTimeDto.getInstance().getTimeObj().entrySet()) {
             OutputDataDto temp = new OutputDataDto();
             System.out.println(entry.getValue());
-            temp.setUsername(entry.getKey());
             temp.setServices(entry.getValue().getEndpoint().getServices());
             temp.setUrl(entry.getValue().getEndpoint().getUrl());
             temp.setRole(entry.getValue().getEndpoint().getRole());
