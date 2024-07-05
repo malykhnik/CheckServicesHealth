@@ -53,6 +53,10 @@
     overflow: hidden;
 }
 
+.card:hover {
+    box-shadow: 1px 1px 10px 10px #e4ed7e;
+}
+
 h2 {
     margin-left: 50px;
 }

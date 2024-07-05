@@ -3,6 +3,7 @@ package com.praktika.checkservicehealth.controller;
 import com.praktika.checkservicehealth.dto.EndpointStatusDto;
 import com.praktika.checkservicehealth.dto.OutputDataDto;
 import com.praktika.checkservicehealth.dto.SavedDataDto;
+import com.praktika.checkservicehealth.entity.Endpoint;
 import com.praktika.checkservicehealth.service.EndpointService;
 import com.praktika.checkservicehealth.service.NotificationTg;
 import com.praktika.checkservicehealth.service.impl.EndpointServiceImpl;
@@ -15,15 +16,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Controller
@@ -55,5 +51,9 @@ public class EndpointController {
         return "check";
     }
 
-
+    @GetMapping("/checkByUsername/{username}")
+    public String checkEndpointByUsername(@PathVariable String username) {
+        endpointService.checkEndpointByUsername(username);
+        return "redirect:/api/endpoints/check";
+    }
 }

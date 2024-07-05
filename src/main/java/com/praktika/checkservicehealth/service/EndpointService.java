@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface EndpointService {
     void checkAllEndpoints();
+    void checkEndpointByUsername(String url);
     List<OutputDataDto> getSavedData();
 }

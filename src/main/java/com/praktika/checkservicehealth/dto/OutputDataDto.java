@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class OutputDataDto {
+    private String username;
     private String role;
     private String url;
     private List<ServiceDto> services;
