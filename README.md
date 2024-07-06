@@ -1,6 +1,7 @@
 СХЕМА РАБОТЫ МИКРОСЕРВИСА
 
-![image](https://github.com/malykhnik/CheckServicesHealth/assets/91732507/9a4f1200-8bb6-4818-a06d-da703f080886)
+![image](https://github.com/malykhnik/CheckServicesHealth/assets/91732507/a41c2197-382a-43e9-a5e2-747ea82cd915)
+
 
 КАК ЭТО РАБОТАЕТ:
 
