@@ -1,3 +1,6 @@
+-- ЭТОТ СКРИПТ НУЖЕН ДЛЯ ЗАПОЛНЕНИЯ БД ПОСЛЕ ЗАПУСКА docker-compose,
+-- ТАК КАК АВТОМАТИЧЕСКОЙ ИНИЦИАЛИЗАЦИИ БД НЕТ
+
 INSERT INTO roles (id, name) VALUES (1, 'user');
 INSERT INTO roles (id, name) VALUES (2, 'admin');
 

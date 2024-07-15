@@ -115,7 +115,6 @@ public class EndpointServiceImpl implements EndpointService {
             String formattedTime = dtf.format(LocalDateTime.now());
             LOGGER.info("зашел в цикл");
 
-            LOGGER.info("зашел в if");
             LoginEndpointDto loginEndpointDto = new LoginEndpointDto(endpoint.getUsername(), endpoint.getPassword());
 
             LOGGER.info(endpoint.getUrl());
@@ -170,8 +169,7 @@ public class EndpointServiceImpl implements EndpointService {
 
     private boolean checkEndpointTimer(String endpoint) {
         Map<String, TimeDto> map = EndpointWithTimeDto.getInstance().getTimeObj();
-        LOGGER.info("MAP:::");
-        LOGGER.info(map.toString());
+        LOGGER.info("MAP: " + map.toString());
         if (map.get(endpoint).getLastVisit() == null) {
             Optional<Endpoint> endpointOptional = endpointRepo.findEndpointByUsername(endpoint);
             endpointOptional.ifPresent(value -> EndpointWithTimeDto.getInstance().getTimeObj().put(endpoint, new TimeDto(new EndpointStatusDto(), Instant.now(), value.getPeriod())));
