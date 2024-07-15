@@ -1,6 +1,7 @@
 package com.praktika.checkservicehealth.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.time.Duration;
 @Table(name = "endpoints")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Endpoint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +32,6 @@ public class Endpoint {
 
     public Duration getPeriod() {
         return Duration.ofSeconds(period);
-    }
-
-    public void setPeriod(Duration period) {
-        this.period = period.getSeconds();
     }
 
 }

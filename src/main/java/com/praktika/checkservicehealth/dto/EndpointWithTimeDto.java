@@ -34,9 +34,7 @@ public class EndpointWithTimeDto {
 
     public void init(EndpointRepo endpointRepo) {
         List<Endpoint> endpointsList = endpointRepo.findAll();
-        endpointsList.forEach(endpoint -> {
-            timeObj.put(endpoint.getUsername(), new TimeDto(new EndpointStatusDto(),Instant.now(), endpoint.getPeriod()));
-        });
+        endpointsList.forEach(endpoint -> timeObj.put(endpoint.getUsername(), new TimeDto(new EndpointStatusDto(), Instant.now(), endpoint.getPeriod())));
     }
 
     public void updateMap(String endpoint, EndpointStatusDto endpointStatusDto) {

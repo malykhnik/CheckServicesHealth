@@ -25,7 +25,7 @@ public class AdminController {
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Пользователя с таким username не существует");
         }
-        Optional<Role> roleOptional = Optional.ofNullable(roleRepo.findByName(changeRoleDto.role()));
+        Optional<Role> roleOptional = roleRepo.findByName(changeRoleDto.role());
         if (roleOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Такой роли не существует!");
         }
@@ -50,7 +50,7 @@ public class AdminController {
         }
 
         User user = userOptional.get();
-        Optional<Role> roleOptional = Optional.ofNullable(roleRepo.findByName("user"));
+        Optional<Role> roleOptional = roleRepo.findByName("user");
         if (roleOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Такой роли не существует!");
         }

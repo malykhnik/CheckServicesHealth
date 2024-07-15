@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface EndpointRepo extends JpaRepository<Endpoint, Long> {
     Optional<Endpoint> findEndpointByUrl(String url);
+    Optional<Endpoint> findEndpointByUsername(String username);
 }

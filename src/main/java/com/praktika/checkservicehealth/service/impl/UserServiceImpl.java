@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -24,12 +26,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(UserDto userDto) {
-        Role role = roleRepo.findByName("user");
+        Optional<Role> optionalRole = roleRepo.findByName("user");
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(encoder.encode(userDto.getPassword()));
-        user.setRole(role);
-
+        optionalRole.ifPresent(user::setRole);
         userRepo.save(user);
     }
 }

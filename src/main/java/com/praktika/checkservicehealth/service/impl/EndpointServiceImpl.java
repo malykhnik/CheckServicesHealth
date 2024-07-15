@@ -52,6 +52,9 @@ public class EndpointServiceImpl implements EndpointService {
     public void checkAllEndpoints() {
         LOGGER.info("ВЫЗВАНА ФУНКЦИЯ checkAllEndpoints()");
         List<Endpoint> endpoints = endpointRepo.findAll();
+
+        if (endpoints.isEmpty()) return;
+
         LOGGER.info(endpoints.toString());
         endpoints.forEach(endpoint -> {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -167,6 +170,12 @@ public class EndpointServiceImpl implements EndpointService {
 
     private boolean checkEndpointTimer(String endpoint) {
         Map<String, TimeDto> map = EndpointWithTimeDto.getInstance().getTimeObj();
+        LOGGER.info("MAP:::");
+        LOGGER.info(map.toString());
+        if (map.get(endpoint).getLastVisit() == null) {
+            Optional<Endpoint> endpointOptional = endpointRepo.findEndpointByUsername(endpoint);
+            endpointOptional.ifPresent(value -> EndpointWithTimeDto.getInstance().getTimeObj().put(endpoint, new TimeDto(new EndpointStatusDto(), Instant.now(), value.getPeriod())));
+        }
         if (map.get(endpoint).getLastVisit().plus(map.get(endpoint).getTimePeriod()).isBefore(Instant.now())) {
             map.get(endpoint).setLastVisit(Instant.now());
             return true;
