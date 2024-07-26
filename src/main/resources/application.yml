@@ -3,7 +3,7 @@ spring:
     name: CheckServiceHealth
   datasource:
     url: jdbc:postgresql://192.168.238.214:5432/services_health
-    password: postgres
+    password: 123
     username: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
