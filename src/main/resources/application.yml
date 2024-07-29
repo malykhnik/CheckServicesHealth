@@ -4,7 +4,7 @@ spring:
   application:
     name: CheckServiceHealth
   datasource:
-    url: jdbc:postgresql://192.168.238.214:5432/services_health
+    url: jdbc:postgresql://176.59.104.195/:5432/services_health
     password: 123
     username: postgres
     driver-class-name: org.postgresql.Driver
